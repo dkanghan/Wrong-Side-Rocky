@@ -24,49 +24,39 @@ public class roadView extends SurfaceView implements Runnable {
     private Canvas canvas;
     private SurfaceHolder ourHolder;
     private Context context;
-    public trafficCars car1;
-    public trafficCars car2;
-    public trafficCars car3;
-    public trafficCars car4;
-    public Police police;
-    List<trafficCars> cars;
+//    public trafficCars car1;
+//    public trafficCars car2;
+//    public trafficCars car3;
+//    public trafficCars car4;
+//    public Police police;
+//    List<trafficCars> cars;
     boolean intersectsrightleft,intersectstopbottom;
     Random generator = new Random();
     Shield shield;
+    private GameObjects gameObjects;
+
+    LevelManager lm;
 
 
     public roadView(Context context, int x, int y) {
         super(context);
+
         this.context = context;
         ourHolder = getHolder();
         paint = new Paint();
         screenX = x;
         screenY = y;
-        cars = new ArrayList<trafficCars>();
-        player = new Rocky(context,screenX,screenY);
-        car1 = new trafficCars(context,screenX,screenY);
-        car2 = new trafficCars(context,screenX,screenY);
-        car3 = new trafficCars(context,screenX,screenY);
-        car4 = new trafficCars(context,screenX,screenY);
-        shield = new Shield(context,screenX,screenY);
-        cars.add(car1);
-        cars.add(car2);
-        cars.add(car3);
-        cars.add(car4);
-        police = new Police(context,screenX,screenY);
+        gameObjects = new GameObjects(context, screenX, screenY);
+        gameObjects.initializeObjects(1);
+
+
         intersectsrightleft = false;
         intersectstopbottom = false;
 
     }
     private void update(){
-        player.update();
-        car1.update(player.getSpeed(),context,screenY,0);
-        car2.update(player.getSpeed(), context,screenY,0);
-        car3.update(player.getSpeed(), context,screenY,0);
-        car4.update(player.getSpeed(), context,screenY,0);
-        shield.update(player.getSpeed());
 
-        police.update(player,player.getSpeed(), (ArrayList<trafficCars>) cars);
+        gameObjects.updateObjects();
 
     }
     private void draw(){
@@ -77,58 +67,20 @@ public class roadView extends SurfaceView implements Runnable {
                     0,
                     0));
             paint.setColor(Color.argb(255, 255, 255, 255));
+            canvas.drawBitmap(gameObjects.getRoadBitmap(), 0, (float) screenY / 2- (float) gameObjects.getRoadBitmap().getHeight() / 2, paint);
             canvas.drawBitmap(
-                    player.getBitmap(),
-                    player.getX(),
-                    player.getY(),
+                    gameObjects.getPlayer().getBitmap(),
+                    gameObjects.getPlayer().getX(),
+                    gameObjects.getPlayer().getY(),
                     paint
             );
-            canvas.drawBitmap
-                    (car1.getBitmap(),
-                            car1.getX(),
-                            car1.getY(), paint);
-            canvas.drawBitmap
-                    (car2.getBitmap(),
-                            car2.getX(),
-                            car2.getY(), paint);
-            canvas.drawBitmap
-                    (car3.getBitmap(),
-                            car3.getX(),
-                            car3.getY(), paint);
-            canvas.drawBitmap
-                    (car4.getBitmap(),
-                            car4.getX(),
-                            car4.getY(), paint);
-            canvas.drawBitmap
-                    (police.getBitmap(),
-                            police.getX(),
-                            police.getY(), paint);
-            canvas.drawBitmap
-                    (shield.getBitmap(),
-                            shield.getX(),
-                            shield.getY(), paint);
 
-//            Rect shieldhiitbox = shield.getHitbox();
-//
-//            Paint shieldpaint = new Paint();
-//            shieldpaint.setColor(Color.BLUE);
-//            canvas.drawRect(shieldhiitbox,shieldpaint);
-
-
-//            Paint policePaint = new Paint();
-//            policePaint.setColor(Color.RED); // Color for police hitbox
-//            for (trafficCars car : cars) {
-//                Rect policeHitbox = police.getHitbox();
-//                canvas.drawRect(policeHitbox, policePaint);
-//            }
-//
-//            // Draw cars' hitboxes
-//            Paint carPaint = new Paint();
-//            carPaint.setColor(Color.BLUE); // Color for cars' hitboxes
-//            for (trafficCars car : cars) {
-//                Rect carHitbox = car.getHitbox();
-//                canvas.drawRect(carHitbox, carPaint);
-//            }
+            for(trafficCars car: gameObjects.getCars()){
+                canvas.drawBitmap(car.getBitmap(), car.getX(), car.getY(), paint);
+            }
+            for(Police police: gameObjects.getPolice()){
+                canvas.drawBitmap(police.getBitmap(), police.getX(), police.getY(), paint);
+            }
 
             ourHolder.unlockCanvasAndPost(canvas);
         }
@@ -173,7 +125,7 @@ public class roadView extends SurfaceView implements Runnable {
         switch (motionEvent.getAction() & MotionEvent.ACTION_MASK){
             case MotionEvent.ACTION_MOVE:
 //                player.setX(touchX);
-                player.setY(touchY);
+                gameObjects.getPlayer().setY(touchY);
                 break;
 
         }
