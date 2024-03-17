@@ -16,14 +16,19 @@ public class Rocky {
     private final int MIN_SPEED = 1;
     private final int MAX_SPEED = 20;
 
-    public Rocky(Context context, int screenX, int screenY) {
+    public Rocky(Context context, int screenX, int screenY, int minY, int maxY) {
+        this.minY = minY;
+        this.maxY = maxY;
         x=50;
         y=50;
         speed = 1;
         bitmap = BitmapFactory.decodeResource(context.getResources(), R.drawable.rocky);
         hitBox = new Rect(x, y, bitmap.getWidth(), bitmap.getHeight());
-        minY = 1;
-        maxY = screenY - bitmap.getHeight()+1;
+
+
+
+//        minY = 1;
+//        maxY = screenY - bitmap.getHeight()+1;
 
     }
     public Bitmap getBitmap() {

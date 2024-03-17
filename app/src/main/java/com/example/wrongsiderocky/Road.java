@@ -24,24 +24,24 @@ public class Road {
     private final int MIN_SPEED = 1;
     private final int MAX_SPEED = 20;
 
-    public Road(Context context, int screenX, int screenY, int level, Rocky player) {
+    public Road(Context context, int screenX, int screenY, int level, int playerheight) {
         x = 0;
         maxX = screenX;
         maxY = screenY;
         minX = 0;
         minY = 0;
+
         if (level == 1) {
             bitmap = BitmapFactory.decodeResource
                     (context.getResources(), R.drawable.road);
-            bitmap = Bitmap.createScaledBitmap(bitmap, screenX * 2, player.getBitmap().getHeight() * 4, false);
-            y = player.getBitmap().getHeight() * 3;
+            bitmap = Bitmap.createScaledBitmap(bitmap, screenX * 2, playerheight * 4, false);
         }
         else if(level == 2){
                 bitmap = BitmapFactory.decodeResource
                         (context.getResources(), R.drawable.road1);
-                bitmap = Bitmap.createScaledBitmap(bitmap, screenX*2, player.getBitmap().getHeight() * 7, false);
-                y = player.getBitmap().getHeight() *2 ;
+                bitmap = Bitmap.createScaledBitmap(bitmap, screenX*2, playerheight * 7, false);
         }
+        y = screenY/2 - bitmap.getHeight()/2 ;
         frameWidth = bitmap.getWidth();
         frameHeight = bitmap.getHeight();
         hitBox = new Rect(x, y, frameWidth, frameHeight);

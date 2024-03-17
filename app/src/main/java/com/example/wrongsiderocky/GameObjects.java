@@ -27,7 +27,7 @@ public class GameObjects {
         this.screenY = screenY;
         cars = new ArrayList<>();
         police = new ArrayList<>();
-        player = new Rocky(context, screenX, screenY);
+
 
 
     }
@@ -35,22 +35,27 @@ public class GameObjects {
 
 
     public void initializeObjects(int level){
+        int playerHeight = new Rocky(context, screenX, screenY, 1,1).getBitmap().getHeight();
+        road = new Road(context,screenX,screenY,level,playerHeight);
+        roadBitmap = road.getBitmap();
         switch (level){
             case 1:
-                road = new Road(context,screenX,screenY,level,player);
-                roadBitmap = road.getBitmap();
+                player = new Rocky(context, screenX, screenY,screenY/2 - roadBitmap.getHeight()/2 + playerHeight/2, screenY/2+roadBitmap.getHeight()/2 - playerHeight/2);
+
                 cars.add(new trafficCars(context, screenX, screenY,screenY/2 - player.getBitmap().getHeight()));
                 cars.add(new trafficCars(context, screenX, screenY,screenY/2 + player.getBitmap().getHeight()));
                 break;
             case 2:
-                road = new Road(context,screenX,screenY,level,player);
-                roadBitmap = road.getBitmap();
+                player = new Rocky(context, screenX, screenY,(screenY/2) - (roadBitmap.getHeight()/2) + playerHeight/2, screenY/2 + roadBitmap.getHeight()/2 - playerHeight/2);
+
                 cars.add(new trafficCars(context, screenX, screenY,screenY/2 - player.getBitmap().getHeight()*3+140));
                 cars.add(new trafficCars(context, screenX, screenY,screenY/2 + player.getBitmap().getHeight()));
                 cars.add(new trafficCars(context, screenX, screenY,screenY/2 + player.getBitmap().getHeight()*3-30));
                 police.add(new Police(context, screenX, screenY));
                 break;
             case 3:
+                player = new Rocky(context, screenX, screenY,screenY/2 - roadBitmap.getHeight()/2 + playerHeight/2, screenY/2+roadBitmap.getHeight()/2 - playerHeight/2);
+
 //                cars.add(new trafficCars(context, screenX, screenY));
 //                cars.add(new trafficCars(context, screenX, screenY));
 //                cars.add(new trafficCars(context, screenX, screenY));
