@@ -47,7 +47,7 @@ public class roadView extends SurfaceView implements Runnable {
         screenX = x;
         screenY = y;
         gameObjects = new GameObjects(context, screenX, screenY);
-        gameObjects.initializeObjects(1);
+        gameObjects.initializeObjects(2);
 
 
         intersectsrightleft = false;
@@ -67,13 +67,19 @@ public class roadView extends SurfaceView implements Runnable {
                     0,
                     0));
             paint.setColor(Color.argb(255, 255, 255, 255));
-            canvas.drawBitmap(gameObjects.getRoadBitmap(), 0, (float) screenY / 2- (float) gameObjects.getRoadBitmap().getHeight() / 2, paint);
+            canvas.drawBitmap(gameObjects.getRoadBitmap(), gameObjects.getRoad().getX(),gameObjects.getRoad().getY() , paint);
             canvas.drawBitmap(
                     gameObjects.getPlayer().getBitmap(),
                     gameObjects.getPlayer().getX(),
                     gameObjects.getPlayer().getY(),
                     paint
             );
+
+//            Paint policePaint = new Paint();
+//            policePaint.setColor(Color.RED); // Color for police hitbox
+//                Rect policeHitbox = gameObjects.getRoad().getHitbox();
+//                canvas.drawRect(policeHitbox, policePaint);
+
 
             for(trafficCars car: gameObjects.getCars()){
                 canvas.drawBitmap(car.getBitmap(), car.getX(), car.getY(), paint);

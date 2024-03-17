@@ -19,6 +19,7 @@ public class GameObjects {
     private Bitmap roadBitmap;
 
     private int screenX, screenY;
+    private Road road;
 
     public GameObjects(Context context, int screenX, int screenY) {
         this.context = context;
@@ -28,6 +29,7 @@ public class GameObjects {
         police = new ArrayList<>();
         player = new Rocky(context, screenX, screenY);
 
+
     }
 
 
@@ -35,22 +37,23 @@ public class GameObjects {
     public void initializeObjects(int level){
         switch (level){
             case 1:
-                roadBitmap = BitmapFactory.decodeResource(context.getResources(), R.drawable.road);
-                roadBitmap  = Bitmap.createScaledBitmap(roadBitmap, screenX*2, player.getBitmap().getHeight() * 3, false);
-                cars.add(new trafficCars(context, screenX, screenY));
-                cars.add(new trafficCars(context, screenX, screenY));
+                road = new Road(context,screenX,screenY,level,player);
+                roadBitmap = road.getBitmap();
+                cars.add(new trafficCars(context, screenX, screenY,screenY/2 - player.getBitmap().getHeight()));
+                cars.add(new trafficCars(context, screenX, screenY,screenY/2 + player.getBitmap().getHeight()));
                 break;
             case 2:
-                roadBitmap = BitmapFactory.decodeResource(context.getResources(), R.drawable.road);
-                cars.add(new trafficCars(context, screenX, screenY));
-                cars.add(new trafficCars(context, screenX, screenY));
-                cars.add(new trafficCars(context, screenX, screenY));
+                road = new Road(context,screenX,screenY,level,player);
+                roadBitmap = road.getBitmap();
+                cars.add(new trafficCars(context, screenX, screenY,screenY/2 - player.getBitmap().getHeight()*3+140));
+                cars.add(new trafficCars(context, screenX, screenY,screenY/2 + player.getBitmap().getHeight()));
+                cars.add(new trafficCars(context, screenX, screenY,screenY/2 + player.getBitmap().getHeight()*3-30));
                 police.add(new Police(context, screenX, screenY));
                 break;
             case 3:
-                cars.add(new trafficCars(context, screenX, screenY));
-                cars.add(new trafficCars(context, screenX, screenY));
-                cars.add(new trafficCars(context, screenX, screenY));
+//                cars.add(new trafficCars(context, screenX, screenY));
+//                cars.add(new trafficCars(context, screenX, screenY));
+//                cars.add(new trafficCars(context, screenX, screenY));
                 police.add(new Police(context, screenX, screenY));
                 police.add(new Police(context, screenX, screenY));
                 break;
@@ -60,6 +63,7 @@ public class GameObjects {
 
     public void updateObjects(){
         player.update();
+        road.update(player.getSpeed());
         for(trafficCars car: cars){
             car.update(player.getSpeed(),context,screenY,0);
         }
@@ -72,6 +76,7 @@ public class GameObjects {
     public Bitmap getRoadBitmap() {
         return roadBitmap;
     }
+    public Road getRoad(){return road;}
 
     public ArrayList<trafficCars> getCars() {
         return cars;

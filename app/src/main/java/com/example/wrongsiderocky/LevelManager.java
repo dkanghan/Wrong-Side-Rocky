@@ -10,9 +10,9 @@ public class LevelManager {
     public LevelManager(Context context, int screenX, int screenY) {
         // Initialize levels
         levels = new Level[] {
-                new Level1(context,screenX,screenY),
-                new Level2(context,screenX,screenY),
-                new Level3(context,screenX,screenY)
+                new Level(),
+                new Level(),
+                new Level()
                 // Add more levels as needed
         };
         currentLevel = 0; // Start from the first level

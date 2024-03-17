@@ -28,7 +28,7 @@ public class trafficCars {
     private long lastFrameTime;
     private boolean ambulance;
 
-    public trafficCars(Context context, int screenX, int screenY){
+    public trafficCars(Context context, int screenX, int screenY, int y){
         Random generator = new Random();
         int cars = generator.nextInt(4);
         if(cars == 0) {
@@ -65,15 +65,13 @@ public class trafficCars {
 
         maxX = screenX;
         maxY = screenY;
-        System.out.println(screenY);
         minX = 0;
         minY = 0;
+        this.y = y;
         if(ambulance){
             hitBox = new Rect(x, y, frameWidth, frameHeight);
-            y = generator.nextInt(maxY - frameHeight + 1) ;
         }else {
             hitBox = new Rect(x, y, bitmap.getWidth(), bitmap.getHeight());
-            y = generator.nextInt(maxY) - bitmap.getHeight();
         }
         speed = generator.nextInt(6)+10;
         x = screenX;
@@ -97,7 +95,7 @@ public class trafficCars {
                 Random generator = new Random();
                 speed = generator.nextInt(10)+10;
                 x = maxX;
-                y = generator.nextInt(maxY - frameHeight + 1)+ minY ;
+//                y = generator.nextInt(maxY - frameHeight + 1)+ minY ;
             }
 
             hitBox.left = x;
@@ -124,7 +122,7 @@ public class trafficCars {
                 }
                 speed = generator.nextInt(10)+10;
                 x = maxX;
-                y = generator.nextInt(maxY - bitmap.getHeight() + 1) + minY;
+                //y = generator.nextInt(maxY - bitmap.getHeight() + 1) + minY;
             }
 
             hitBox.left = x;
