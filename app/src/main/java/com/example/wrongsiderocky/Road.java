@@ -48,7 +48,7 @@ public class Road {
     }
 
     public void update(int playerSpeed){
-        x -= playerSpeed*6;
+        x -= playerSpeed*8;
         if(x < minX-frameWidth/2){
             x = 0;
         }

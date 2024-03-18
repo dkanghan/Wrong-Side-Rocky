@@ -13,6 +13,8 @@ public class Rocky {
     private boolean boosting = false;
     private int maxY;
     private int minY;
+    private int maxX;
+    private int minX;
     private final int MIN_SPEED = 1;
     private final int MAX_SPEED = 20;
 
@@ -24,11 +26,8 @@ public class Rocky {
         speed = 1;
         bitmap = BitmapFactory.decodeResource(context.getResources(), R.drawable.rocky);
         hitBox = new Rect(x, y, bitmap.getWidth(), bitmap.getHeight());
-
-
-
-//        minY = 1;
-//        maxY = screenY - bitmap.getHeight()+1;
+        maxX = screenX/2-bitmap.getWidth();
+        minX = 50;
 
     }
     public Bitmap getBitmap() {
@@ -64,12 +63,25 @@ public class Rocky {
         if (speed < MIN_SPEED) {
             speed = MIN_SPEED;
         }
-        if (y < minY) {
+        if (y <= minY) {
             y = minY;
         }
-        if (y > maxY) {
+        if (y >= maxY) {
             y = maxY;
         }
+        if (x <= minX) {
+            x = minX;
+        }
+        if (x >= maxX) {
+            x = maxX;
+        }
+        if (x > minX) {
+            x -= 5;
+        }
+        hitBox.left = x;
+        hitBox.top = y;
+        hitBox.right = x + bitmap.getWidth();
+        hitBox.bottom = y + bitmap.getHeight();
 
     }
 

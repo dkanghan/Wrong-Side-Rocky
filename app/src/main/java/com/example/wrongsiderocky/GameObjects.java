@@ -15,11 +15,14 @@ public class GameObjects {
 
     private ArrayList<trafficCars> cars;
     private ArrayList<Police> police;
+    private Shield shield;
     private Rocky player;
     private Bitmap roadBitmap;
 
     private int screenX, screenY;
     private Road road;
+    private int playerHeight;
+    private int level;
 
     public GameObjects(Context context, int screenX, int screenY) {
         this.context = context;
@@ -35,22 +38,23 @@ public class GameObjects {
 
 
     public void initializeObjects(int level){
-        int playerHeight = new Rocky(context, screenX, screenY, 1,1).getBitmap().getHeight();
+        this.level = level;
+        playerHeight = new Rocky(context, screenX, screenY, 1,1).getBitmap().getHeight();
         road = new Road(context,screenX,screenY,level,playerHeight);
         roadBitmap = road.getBitmap();
         switch (level){
             case 1:
-                player = new Rocky(context, screenX, screenY,screenY/2 - roadBitmap.getHeight()/2 + playerHeight/2, screenY/2+roadBitmap.getHeight()/2 - playerHeight/2);
+                player = new Rocky(context, screenX, screenY,screenY/2 - roadBitmap.getHeight()/2 + playerHeight/2, screenY/2+roadBitmap.getHeight()/2 - 3*playerHeight/2);
 
-                cars.add(new trafficCars(context, screenX, screenY,screenY/2 - player.getBitmap().getHeight()));
-                cars.add(new trafficCars(context, screenX, screenY,screenY/2 + player.getBitmap().getHeight()));
+                cars.add(new trafficCars(context, screenX, screenY,screenY/2 - 3*playerHeight/2));
+                cars.add(new trafficCars(context, screenX, screenY,screenY/2 + playerHeight/2));
                 break;
             case 2:
-                player = new Rocky(context, screenX, screenY,(screenY/2) - (roadBitmap.getHeight()/2) + playerHeight/2, screenY/2 + roadBitmap.getHeight()/2 - playerHeight/2);
-
-                cars.add(new trafficCars(context, screenX, screenY,screenY/2 - player.getBitmap().getHeight()*3+140));
-                cars.add(new trafficCars(context, screenX, screenY,screenY/2 + player.getBitmap().getHeight()));
-                cars.add(new trafficCars(context, screenX, screenY,screenY/2 + player.getBitmap().getHeight()*3-30));
+                player = new Rocky(context, screenX, screenY,(screenY/2) - (roadBitmap.getHeight()/2) + playerHeight/2, screenY/2 + roadBitmap.getHeight()/2 - 3*playerHeight/2);
+                shield = new Shield(context,screenX,screenY,playerHeight);
+                cars.add(new trafficCars(context, screenX, screenY,screenY/2 - playerHeight));
+                cars.add(new trafficCars(context, screenX, screenY,screenY/2 + playerHeight/2));
+                cars.add(new trafficCars(context, screenX, screenY,screenY/2 + playerHeight*3/2));
                 police.add(new Police(context, screenX, screenY));
                 break;
             case 3:
@@ -59,7 +63,6 @@ public class GameObjects {
 //                cars.add(new trafficCars(context, screenX, screenY));
 //                cars.add(new trafficCars(context, screenX, screenY));
 //                cars.add(new trafficCars(context, screenX, screenY));
-                police.add(new Police(context, screenX, screenY));
                 police.add(new Police(context, screenX, screenY));
                 break;
         }
@@ -70,18 +73,24 @@ public class GameObjects {
         player.update();
         road.update(player.getSpeed());
         for(trafficCars car: cars){
-            car.update(player.getSpeed(),context,screenY,0);
+            car.update(player.getSpeed(),context,screenY,0,playerHeight,level);
         }
         if (!police.isEmpty()){
             for (Police police1: police){
                 police1.update(player, player.getSpeed(), (ArrayList<trafficCars>) cars);
             }
         }
+        if(level ==2 ){
+            shield.update(player.getSpeed());
+        }
+
+
     }
     public Bitmap getRoadBitmap() {
         return roadBitmap;
     }
     public Road getRoad(){return road;}
+    public Shield getShield(){return shield;}
 
     public ArrayList<trafficCars> getCars() {
         return cars;

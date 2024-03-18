@@ -47,12 +47,10 @@ public class Police {
 
         speed = generator.nextInt(6)+10;
         x = screenX;
-        y = generator.nextInt(maxY - frameHeight + 1) ;
+        y = screenY/2 ;
     }
 
     public void update(Rocky player, int playerSpeed, ArrayList<trafficCars> cars ){
-
-        HashSet<trafficCars> processedCars = new HashSet<>();
 
         for (trafficCars car : cars) {
             Rect carHitbox = car.getHitbox();
@@ -95,11 +93,9 @@ public class Police {
                 x -= playerSpeed/2;
                 x -= speed/2;
                 if (player.getY() < y && player.getX() < x) {
-                    y -= playerSpeed / 6;
-                    y -= speed / 6;
+                    y -= speed / 8;
                 } else if (player.getY() > y && player.getX() < x) {
-                    y += playerSpeed / 6;
-                    y += speed / 6;
+                    y += speed / 8;
                 }
 
             }
@@ -114,9 +110,9 @@ public class Police {
 
         if(x < minX-frameWidth){
             Random generator = new Random();
-            speed = generator.nextInt(10)+10;
+            speed = generator.nextInt(5)+10;
             x = maxX;
-            y = generator.nextInt(maxY - frameHeight) ;
+            y = maxY/2 ;
         }
 
         hitBox.left = x;

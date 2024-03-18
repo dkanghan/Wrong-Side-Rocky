@@ -19,12 +19,13 @@ public class Shield {
     private final int frameDuration = 100;
     private int frameCount = 8;
     private final Rect hitBox;
+    private boolean visible = true;
 
     private int frameWidth, frameHeight;
     private int currentFrame = 0;
     private long lastFrameTime;
 
-    public Shield(Context context, int screenX, int screenY) {
+    public Shield(Context context, int screenX, int screenY, int y) {
         Random generator = new Random();
         bitmaps = new ArrayList<>();
 
@@ -45,18 +46,18 @@ public class Shield {
         minX = 0;
         minY = 0;
         hitBox = new Rect(x, y, bitmaps.get(0).getWidth(), bitmaps.get(0).getHeight());
-        y = generator.nextInt(maxY) - bitmaps.get(0).getHeight();
+        this.y = maxY/2 - y;
         x = screenX;
     }
 
     public void update(int playerSpeed) {
-        x -= playerSpeed;
+        x -= playerSpeed*3;
         Random generator = new Random();
 
-        if (x < minX - frameWidth) {
-            x = maxX;
-            y = generator.nextInt(maxY - frameHeight + 1);
-        }
+//        if (x < minX - frameWidth) {
+//            x = maxX;
+//            y = generator.nextInt(maxY - frameHeight + 1);
+//        }
 
         hitBox.left = x;
         hitBox.top = y;
@@ -89,5 +90,13 @@ public class Shield {
     public int getY() {
         return y;
     }
+    public void setvisible(boolean visible){ this.visible=visible;}
 
+    public boolean isVisible() {
+        return visible;
+    }
+
+    public void setX(int x) {
+        this.x = x;
+    }
 }
