@@ -11,7 +11,7 @@ import android.view.SurfaceView;
 import java.util.ArrayList;
 
 public class GameObjects {
-    private Context context;
+    private final Context context;
 
     private ArrayList<trafficCars> cars;
     private ArrayList<Police> police;
@@ -19,7 +19,8 @@ public class GameObjects {
     private Rocky player;
     private Bitmap roadBitmap;
 
-    private int screenX, screenY;
+    private final int screenX;
+    private final int screenY;
     private Road road;
     private int playerHeight;
     private int level;
@@ -30,14 +31,13 @@ public class GameObjects {
         this.screenY = screenY;
         cars = new ArrayList<>();
         police = new ArrayList<>();
-
-
-
     }
 
 
 
     public void initializeObjects(int level){
+        cars.clear();
+        police.clear();
         this.level = level;
         playerHeight = new Rocky(context, screenX, screenY, 1,1).getBitmap().getHeight();
         road = new Road(context,screenX,screenY,level,playerHeight);
@@ -45,7 +45,6 @@ public class GameObjects {
         switch (level){
             case 1:
                 player = new Rocky(context, screenX, screenY,screenY/2 - roadBitmap.getHeight()/2 + playerHeight/2, screenY/2+roadBitmap.getHeight()/2 - 3*playerHeight/2);
-
                 cars.add(new trafficCars(context, screenX, screenY,screenY/2 - 3*playerHeight/2));
                 cars.add(new trafficCars(context, screenX, screenY,screenY/2 + playerHeight/2));
                 break;

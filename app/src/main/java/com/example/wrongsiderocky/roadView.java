@@ -7,19 +7,9 @@ import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
 import android.graphics.Rect;
-import android.os.Handler;
-import android.os.Looper;
 import android.view.MotionEvent;
 import android.view.SurfaceHolder;
 import android.view.SurfaceView;
-import android.view.View;
-import android.widget.Button;
-import android.widget.TextView;
-
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Random;
-import java.util.concurrent.TimeUnit;
 
 public class roadView extends SurfaceView implements Runnable {
 
@@ -35,7 +25,7 @@ public class roadView extends SurfaceView implements Runnable {
     private GameObjects gameObjects;
     LevelManager lm;
     private boolean hitdetected;
-    private boolean isPlaying;
+
 
     private int distance;
     Bitmap playBtn;
@@ -45,7 +35,7 @@ public class roadView extends SurfaceView implements Runnable {
         super(context);
         lm = new LevelManager();
         this.context = context;
-        isPlaying = true;
+        playing = true;
         ourHolder = getHolder();
         paint = new Paint();
         screenX = x;
@@ -56,12 +46,12 @@ public class roadView extends SurfaceView implements Runnable {
         shield = 0;
         hitdetected = false;
         playBtn = BitmapFactory.decodeResource(context.getResources(), R.drawable.playbtn);
-        playBtn = Bitmap.createScaledBitmap(playBtn, 24, 24, true);
+        playBtn = Bitmap.createScaledBitmap(playBtn, 48, 48, true);
 
     }
     private void update() throws RuntimeException, InterruptedException {
-        if(isPlaying) {
-            if (distance == 100){
+        if(playing) {
+            if (distance++ == 100){
                 nextLevel();
             }
             gameObjects.updateObjects();
@@ -79,11 +69,10 @@ public class roadView extends SurfaceView implements Runnable {
                     if (shield > 0) {
                         shield--;
                     } else {
-                        isPlaying = false;
+                        playing = false;
                     }
                 }
             }
-            distance++;
         }
 
     }
@@ -96,7 +85,7 @@ public class roadView extends SurfaceView implements Runnable {
                     0,
                     0));
             paint.setColor(Color.argb(255, 255, 255, 255));
-            if(isPlaying){
+            if(playing){
 
             canvas.drawBitmap(gameObjects.getRoadBitmap(), gameObjects.getRoad().getX(),gameObjects.getRoad().getY() , paint);
             canvas.drawBitmap(
@@ -131,9 +120,7 @@ public class roadView extends SurfaceView implements Runnable {
             }
 
             }
-
-
-            ourHolder.unlockCanvasAndPost(canvas);
+          ourHolder.unlockCanvasAndPost(canvas);
         }
     }
 
@@ -149,7 +136,7 @@ public class roadView extends SurfaceView implements Runnable {
 
        ourHolder.unlockCanvasAndPost(canvas);
        pause();
-       gameObjects.initializeObjects(lm.getCurrentLevel());
+
 
 
     }
@@ -165,7 +152,7 @@ public class roadView extends SurfaceView implements Runnable {
         playing = false;
         try {
             gameThread.join();
-        } catch (InterruptedException e) {
+        } catch (InterruptedException ignored) {
         }
     }
 
@@ -179,10 +166,7 @@ public class roadView extends SurfaceView implements Runnable {
     @Override
     public void run() {
         while(playing){
-
-
                 try {
-
                     update();
                     draw();
                 } catch (RuntimeException | InterruptedException e) {
@@ -190,8 +174,6 @@ public class roadView extends SurfaceView implements Runnable {
                 }
                 control();
             }
-
-
     }
 
     @Override
@@ -208,8 +190,12 @@ public class roadView extends SurfaceView implements Runnable {
                 break;
             case MotionEvent.ACTION_DOWN:
                 if (!playing){
-                    if (touchX>= screenX/2 - playBtn.getWidth()/2 && touchX<= screenX/2 + playBtn.getWidth()/2 && touchY >= screenY/2 - playBtn.getHeight()/2 && touchY <= screenY/2 + playBtn.getHeight()/2){
+                    if (touchX>= screenX/2 - 24 && touchX<= screenX/2 + 24 && touchY >= screenY/2 - 24 && touchY <= screenY/2 + 24){
+
+                        gameObjects.initializeObjects(lm.getCurrentLevel());
+
                         resume();
+
                     }
                 }
 
