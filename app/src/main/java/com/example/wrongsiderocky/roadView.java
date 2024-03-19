@@ -52,7 +52,7 @@ public class roadView extends SurfaceView implements Runnable {
         playBtn = Bitmap.createScaledBitmap(playBtn, 48, 48, true);
         sm = new SoundManager();
         sm.loadSound(context);
-//        lm.playLevelSound();
+//        playLevelSound();
 
     }
     private void update() throws RuntimeException, InterruptedException {
@@ -153,6 +153,7 @@ public class roadView extends SurfaceView implements Runnable {
     }
 
     private void nextLevel() throws InterruptedException {
+//        stopLevelSound();
         lm.nextLevel();
        canvas = ourHolder.lockCanvas();
        canvas.drawColor(Color.BLACK);
@@ -163,10 +164,36 @@ public class roadView extends SurfaceView implements Runnable {
        canvas.drawBitmap(playBtn, (float) screenX /2, (float) (screenY /2 + 200), paint);
        ourHolder.unlockCanvasAndPost(canvas);
        sm.playSound("next_level");
+
+//       playLevelSound();
        pause();
 
 
 
+    }
+    public void stopLevelSound(){
+        int currentLevel = lm.getCurrentLevel();
+        if (currentLevel == 1){
+            sm.stop("levelone");
+        }
+        else if (currentLevel == 2){
+            sm.stop("leveltwo");
+        }
+        else if (currentLevel == 3){
+            sm.stop("levelthree");
+        }
+    }
+    public void playLevelSound(){
+        int currentLevel = lm.getCurrentLevel();
+        if (currentLevel == 1){
+            sm.playSound("levelone");
+        }
+        else if (currentLevel == 2){
+            sm.playSound("leveltwo");
+        }
+        else if (currentLevel == 3){
+            sm.playSound("levelthree");
+        }
     }
     private void control(){
         try {
