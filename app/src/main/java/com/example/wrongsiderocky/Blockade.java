@@ -88,9 +88,4 @@ public class Blockade {
         return bitmap;
     }
 
-    public void setvisible(boolean visible){ this.visible=visible;}
-
-    public boolean isVisible() {
-        return visible;
-    }
 }

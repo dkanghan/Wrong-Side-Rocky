@@ -66,7 +66,7 @@ public class roadView extends SurfaceView implements Runnable {
                 sm.playBgMusic(lm.getCurrentLevel());
                 isBGPlaying = true;
             }
-            if (distance++ == 3000 || distance++ == 8000){
+            if (distance++ == 100 || distance++ == 2000){
                 nextLevel();
             }
             gameObjects.updateObjects();
@@ -87,7 +87,7 @@ public class roadView extends SurfaceView implements Runnable {
                     boostingdistance = distance;
                 }
                 if(boosting){
-                    if(distance-boostingdistance <= 100){
+                    if(distance-boostingdistance <= 50){
                         distance += 5;
                         gameObjects.getPlayer().startBoosting();
                     }else {
@@ -189,6 +189,11 @@ public class roadView extends SurfaceView implements Runnable {
                     car.setX(-screenX);
                 }
             }
+
+            for(roadObjects roadObjects : gameObjects.getLamp()){
+                canvas.drawBitmap(roadObjects.getBitmap(), roadObjects.getX(), roadObjects.getY(), paint);
+            }
+
             }
             if(!gameEnded){
                 paint.setTextAlign(Paint.Align.LEFT);
