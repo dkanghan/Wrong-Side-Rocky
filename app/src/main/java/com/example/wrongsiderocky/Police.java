@@ -46,7 +46,7 @@ public class Police {
         hitBox = new Rect(x, y, frameWidth, frameHeight);
 
         speed = generator.nextInt(6)+10;
-        x = screenX;
+        x = screenX*3;
         y = screenY/2 ;
     }
 
@@ -111,7 +111,7 @@ public class Police {
         if(x < minX-frameWidth){
             Random generator = new Random();
             speed = generator.nextInt(5)+10;
-            x = maxX;
+            x = maxX*3;
             y = maxY/2 ;
         }
 
