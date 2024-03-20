@@ -49,11 +49,11 @@ public class Rocky {
     public void setY(int y) {
         this.y = y;
     }
-    public void setBoosting(){
-        boosting = true;
+    public void startBoosting(){
+        speed += 1;
     }
     public void stopBoosting(){
-        boosting = false;
+        speed -= 1;
     }
 
     public void update() {

@@ -33,14 +33,20 @@ public class Road {
 
         if (level == 1) {
             bitmap = BitmapFactory.decodeResource
-                    (context.getResources(), R.drawable.road);
+                    (context.getResources(), R.drawable.road1);
             bitmap = Bitmap.createScaledBitmap(bitmap, screenX * 2, playerheight * 4, false);
         }
         else if(level == 2){
                 bitmap = BitmapFactory.decodeResource
-                        (context.getResources(), R.drawable.road1);
-                bitmap = Bitmap.createScaledBitmap(bitmap, screenX*2, playerheight * 7, false);
+                        (context.getResources(), R.drawable.road2);
+                bitmap = Bitmap.createScaledBitmap(bitmap, screenX*2, playerheight * 5, false);
         }
+        else if(level == 3){
+            bitmap = BitmapFactory.decodeResource
+                    (context.getResources(), R.drawable.road3);
+            bitmap = Bitmap.createScaledBitmap(bitmap, screenX*2, playerheight * 7, false);
+        }
+
         y = screenY/2 - bitmap.getHeight()/2 ;
         frameWidth = bitmap.getWidth();
         frameHeight = bitmap.getHeight();
@@ -48,7 +54,7 @@ public class Road {
     }
 
     public void update(int playerSpeed){
-        x -= playerSpeed*8;
+        x -= playerSpeed*10;
         if(x < minX-frameWidth/2){
             x = 0;
         }

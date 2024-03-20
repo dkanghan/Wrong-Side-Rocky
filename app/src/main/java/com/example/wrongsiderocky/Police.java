@@ -90,7 +90,7 @@ public class Police {
                 }
             }
             else{
-                x -= playerSpeed/2;
+                x -= playerSpeed*3;
                 x -= speed/2;
                 if (player.getY() < y && player.getX() < x) {
                     y -= speed / 8;

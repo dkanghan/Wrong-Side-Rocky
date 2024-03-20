@@ -28,13 +28,13 @@ public class roadView extends SurfaceView implements Runnable {
     private GameObjects gameObjects;
     LevelManager lm;
     private boolean hitdetected;
-    SoundManager sm,bg;
+    SoundManager sm;
 
     private boolean isBGPlaying;
-
-
     private int distance;
-    Bitmap playBtn;
+    private Bitmap playBtn;
+    private boolean boosting;
+    private int boostingdistance;
 
 
     public roadView(Context context, int x, int y) {
@@ -47,6 +47,7 @@ public class roadView extends SurfaceView implements Runnable {
         paint = new Paint();
         screenX = x;
         screenY = y;
+        boostingdistance = 0;
         gameObjects = new GameObjects(context, screenX, screenY);
         distance = 0;
         gameObjects.initializeObjects(lm.getCurrentLevel());
@@ -57,20 +58,15 @@ public class roadView extends SurfaceView implements Runnable {
         playBtn = Bitmap.createScaledBitmap(playBtn, 48, 48, true);
         sm = new SoundManager();
         sm.loadSound(context);
-        bg = new SoundManager();
-        bg.loadSound(context);
-        //playLevelSound();
 
     }
     private void update() throws RuntimeException, InterruptedException, IOException {
         if(playing) {
             if(!isBGPlaying){
                 sm.playBgMusic(lm.getCurrentLevel());
-//                bg.playSound("hit");
-//                bg.playSound("level"+lm.getCurrentLevel());
                 isBGPlaying = true;
             }
-            if (distance++ == 100){
+            if (distance++ == 3000 || distance++ == 8000){
                 nextLevel();
             }
             gameObjects.updateObjects();
@@ -80,26 +76,42 @@ public class roadView extends SurfaceView implements Runnable {
                     if (shield <= 2) {
                         shield++;
                         sm.playSound("extra_life");
+                        gameObjects.getShield().setvisible(false);
+                        gameObjects.getShield().setX(-screenX);
                     }
-                    gameObjects.getShield().setvisible(false);
-                    gameObjects.getShield().setX(-screenX);
+
                 }
+
+                if(Rect.intersects(gameObjects.getPlayer().getHitbox(),gameObjects.getSpeedBoost().getHitbox())){
+                    boosting = true;
+                    boostingdistance = distance;
+                }
+                if(boosting){
+                    if(distance-boostingdistance <= 100){
+                        distance += 5;
+                        gameObjects.getPlayer().startBoosting();
+                    }else {
+                        gameObjects.getPlayer().stopBoosting();
+                    }
+                }
+
             }
+
             if (hitdetected) {
                 if (shield > 0) {
                     shield--;
                     sm.playSound("hit");
                     hitdetected = false;
                 } else {
-                    sm.stopAll();
                     sm.playSound("explode");
+                    sm.stopAll();
                     playing = false;
                     gameEnded = true;
                 }
             }
             if(gameEnded){
                 sm.stopBGMusic();
-                sm.stopAll();
+
             }
 
         }
@@ -147,6 +159,27 @@ public class roadView extends SurfaceView implements Runnable {
                             police.setX(-screenX);
                         }
                     }
+
+                    canvas.drawBitmap(
+                                gameObjects.getBlockade().getBitmap(),
+                                gameObjects.getBlockade().getX(),
+                                gameObjects.getBlockade().getY(),
+                                paint
+                        );
+                    canvas.drawBitmap(
+                            gameObjects.getSpeedBoost().getBitmap(),
+                            gameObjects.getSpeedBoost().getX(),
+                            gameObjects.getSpeedBoost().getY(),
+                            paint
+                    );
+                    if(Rect.intersects(gameObjects.getPlayer().getHitbox(),gameObjects.getBlockade().getHitbox())){
+                            hitdetected = true;
+                            gameObjects.getBlockade().setX(-screenX);
+                        }
+                    if(Rect.intersects(gameObjects.getPlayer().getHitbox(),gameObjects.getSpeedBoost().getHitbox())){
+                        gameObjects.getSpeedBoost().setX(-screenX);
+                    }
+
                 }
 
             for(trafficCars car: gameObjects.getCars()){
@@ -171,7 +204,6 @@ public class roadView extends SurfaceView implements Runnable {
     }
 
     private void nextLevel() throws InterruptedException {
-//        stopLevelSound();
         sm.stopAll();
         sm.stopBGMusic();
         isBGPlaying = false;
@@ -186,36 +218,10 @@ public class roadView extends SurfaceView implements Runnable {
        ourHolder.unlockCanvasAndPost(canvas);
        sm.playSound("next_level");
 
-
-//       playLevelSound();
        pause();
 
 
 
-    }
-    public void stopLevelSound(){
-        int currentLevel = lm.getCurrentLevel();
-        if (currentLevel == 1){
-            sm.stop("levelone");
-        }
-        else if (currentLevel == 2){
-            sm.stop("leveltwo");
-        }
-        else if (currentLevel == 3){
-            sm.stop("levelthree");
-        }
-    }
-    public void playLevelSound(){
-        int currentLevel = lm.getCurrentLevel();
-        if (currentLevel == 1){
-            sm.playSound("levelone");
-        }
-        else if (currentLevel == 2){
-            sm.playSound("leveltwo");
-        }
-        else if (currentLevel == 3){
-            sm.playSound("levelthree");
-        }
     }
     private void control(){
         try {

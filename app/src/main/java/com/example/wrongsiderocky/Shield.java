@@ -50,14 +50,15 @@ public class Shield {
         x = screenX;
     }
 
-    public void update(int playerSpeed) {
-        x -= playerSpeed*3;
+    public void update(int playerSpeed, int playerHeight) {
+        x -= playerSpeed*10;
         Random generator = new Random();
 
-//        if (x < minX - frameWidth) {
-//            x = maxX;
-//            y = generator.nextInt(maxY - frameHeight + 1);
-//        }
+        if (x < minX - frameWidth) {
+            x = maxX*generator.nextInt(5);
+            y = generator.nextInt(2*playerHeight)+maxY/3;
+            this.visible = true;
+        }
 
         hitBox.left = x;
         hitBox.top = y;

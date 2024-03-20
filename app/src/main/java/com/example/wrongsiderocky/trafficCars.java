@@ -79,8 +79,8 @@ public class trafficCars {
 
     }
 
-    public void update(int playerSpeed, Context context, int maxY, int minY, int playerHeight,int level){
-        x -= playerSpeed;
+    public void update(int playerSpeed, Context context, int maxY,  int playerHeight,int level){
+        x -= playerSpeed*3;
         x -= speed;
 
         if(ambulance){
@@ -103,7 +103,7 @@ public class trafficCars {
                         y = maxY/2 + playerHeight/2;
                     }
 
-                } else if (level == 2) {
+                } else if (level == 3) {
                     int sety = generator.nextInt(4);
                     if(sety == 0){
                         y = maxY/2 - playerHeight;
@@ -113,6 +113,16 @@ public class trafficCars {
                         y = maxY/2 + 3*playerHeight/2;
                     } else  {
                         y =  maxY/2 - 5*playerHeight/2;
+                    }
+
+                } else if (level == 2){
+                    int sety = generator.nextInt(3);
+                    if(sety == 0){
+                        y = maxY/2 - 2*playerHeight;
+                    } else if (sety ==1) {
+                        y = maxY/2 + playerHeight/2;
+                    } else {
+                        y = maxY/2 - playerHeight/2;
                     }
                 }
             }
@@ -149,7 +159,7 @@ public class trafficCars {
                         y = maxY/2 + playerHeight/2;
                     }
 
-                } else if (level == 2) {
+                } else if (level == 3) {
                     int sety = generator.nextInt(4);
                     if(sety == 0){
                         y = maxY/2 - playerHeight;
@@ -161,6 +171,15 @@ public class trafficCars {
                         y =  maxY/2 - 5*playerHeight/2;
                     }
 
+                } else if (level == 2){
+                    int sety = generator.nextInt(3);
+                    if(sety == 0){
+                        y = maxY/2 - 2*playerHeight;
+                    } else if (sety ==1) {
+                        y = maxY/2 + playerHeight/2;
+                    } else {
+                        y = maxY/2 - playerHeight/2;
+                    }
                 }
                 //y = generator.nextInt(maxY - bitmap.getHeight() + 1) + minY;
             }

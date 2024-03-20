@@ -166,6 +166,7 @@ public class SoundManager {
         mediaPlayer.setDataSource(descriptor);
         mediaPlayer.prepare();
         mediaPlayer.start();
+        mediaPlayer.setLooping(true);
     }
 
     public void stopBGMusic(){
