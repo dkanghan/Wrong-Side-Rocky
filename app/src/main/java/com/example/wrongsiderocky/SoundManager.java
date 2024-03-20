@@ -5,12 +5,14 @@ import android.content.Context;
 import android.content.res.AssetFileDescriptor;
 import android.content.res.AssetManager;
 import android.media.AudioManager;
+import android.media.MediaPlayer;
 import android.media.SoundPool;
 import android.util.Log;
 import java.io.IOException;
 
 public class SoundManager {
     private SoundPool soundPool;
+    private MediaPlayer mediaPlayer;
     int next_level = -1;
     int coin_pickup = -1;
     int explode = -1;
@@ -21,16 +23,29 @@ public class SoundManager {
     int levelone = -1;
     int leveltwo = -1;
     int levelthree = -1;
+    Context context;
 
 
     public void loadSound(Context context){
+
+        this.context = context;
+
+        mediaPlayer = new MediaPlayer();
+
         soundPool = new SoundPool(10, AudioManager.STREAM_MUSIC,0);
+        soundPool.setOnLoadCompleteListener(new SoundPool.OnLoadCompleteListener() {
+            @Override
+            public void onLoadComplete(SoundPool soundPool, int sampleId, int status) {
+                Log.d("OnLoadComplete", "onLoadComplete: "+ sampleId);
+            }
+        });
         try{
             //Create objects of the 2 required classes
             AssetManager assetManager = context.getAssets();
             AssetFileDescriptor descriptor;
             //create our fx
-
+            descriptor = assetManager.openFd("level1.ogg");
+            levelone = soundPool.load(descriptor, 1);
             descriptor = assetManager.openFd("next_level.ogg");
             next_level = soundPool.load(descriptor, 0);
 
@@ -53,13 +68,12 @@ public class SoundManager {
             descriptor = assetManager.openFd("hit.ogg");
             hit = soundPool.load(descriptor, 0);
 
-            descriptor = assetManager.openFd("level.ogg");
-            levelone = soundPool.load(descriptor, 0);
+
 
             descriptor = assetManager.openFd("leveltwo.ogg");
-            leveltwo = soundPool.load(descriptor, 0);
+            leveltwo = soundPool.load(descriptor, 2);
 
-            descriptor = assetManager.openFd("levelthree.ogg");
+            descriptor = assetManager.openFd("level3.ogg");
             levelthree = soundPool.load(descriptor, 0);
 
         }catch(IOException e){
@@ -84,21 +98,21 @@ public class SoundManager {
                 soundPool.play(extra_life, 1, 1, 0, 0, 1);
                 break;
             case "police":
-                soundPool.play(police,1,1,0,0,1);
+                soundPool.play(police,(float)0.5,(float)0.5,0,0,1);
                 break;
             case "ambulance":
-                soundPool.play(ambulance,1,1,0,0,1);
+                soundPool.play(ambulance,(float)0.5,(float)0.5,0,0,1);
                 break;
             case "hit":
                 soundPool.play(hit,1,1,0,0,1);
                 break;
-            case "levelone":
+            case "level1":
                 soundPool.play(levelone,1,1,0,0,1);
                 break;
-            case "leveltwo":
+            case "level2":
                 soundPool.play(leveltwo,1,1,0,0,1);
                 break;
-            case "levelthree":
+            case "level3":
                 soundPool.play(levelthree,1,1,0,0,1);
                 break;
         }
@@ -128,15 +142,34 @@ public class SoundManager {
             case "hit":
                 soundPool.stop(hit);
                 break;
-            case "levelone":
+            case "level1":
                 soundPool.stop(levelone);
                 break;
-            case "leveltwo":
+            case "level2":
                 soundPool.stop(leveltwo);
                 break;
-            case "levelthree":
+            case "level3":
                 soundPool.stop(levelthree);
                 break;
         }
+    }
+
+    public void stopAll(){
+        soundPool.autoPause();
+    }
+
+    public void playBgMusic(int level) throws IOException {
+        AssetManager assetManager = this.context.getAssets();
+        AssetFileDescriptor descriptor;
+        mediaPlayer = new MediaPlayer();
+        descriptor = assetManager.openFd("level"+level+".ogg");
+        mediaPlayer.setDataSource(descriptor);
+        mediaPlayer.prepare();
+        mediaPlayer.start();
+    }
+
+    public void stopBGMusic(){
+        mediaPlayer.stop();
+        mediaPlayer.release();
     }
 }

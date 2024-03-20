@@ -11,6 +11,8 @@ import android.view.MotionEvent;
 import android.view.SurfaceHolder;
 import android.view.SurfaceView;
 
+import java.io.IOException;
+
 public class roadView extends SurfaceView implements Runnable {
 
     private final int screenX;
@@ -26,7 +28,9 @@ public class roadView extends SurfaceView implements Runnable {
     private GameObjects gameObjects;
     LevelManager lm;
     private boolean hitdetected;
-    SoundManager sm;
+    SoundManager sm,bg;
+
+    private boolean isBGPlaying;
 
 
     private int distance;
@@ -37,6 +41,7 @@ public class roadView extends SurfaceView implements Runnable {
         super(context);
         lm = new LevelManager();
         this.context = context;
+        isBGPlaying = false;
         playing = true;
         ourHolder = getHolder();
         paint = new Paint();
@@ -52,11 +57,19 @@ public class roadView extends SurfaceView implements Runnable {
         playBtn = Bitmap.createScaledBitmap(playBtn, 48, 48, true);
         sm = new SoundManager();
         sm.loadSound(context);
-//        playLevelSound();
+        bg = new SoundManager();
+        bg.loadSound(context);
+        //playLevelSound();
 
     }
-    private void update() throws RuntimeException, InterruptedException {
+    private void update() throws RuntimeException, InterruptedException, IOException {
         if(playing) {
+            if(!isBGPlaying){
+                sm.playBgMusic(lm.getCurrentLevel());
+//                bg.playSound("hit");
+//                bg.playSound("level"+lm.getCurrentLevel());
+                isBGPlaying = true;
+            }
             if (distance++ == 100){
                 nextLevel();
             }
@@ -78,12 +91,17 @@ public class roadView extends SurfaceView implements Runnable {
                     sm.playSound("hit");
                     hitdetected = false;
                 } else {
+                    sm.stopAll();
                     sm.playSound("explode");
                     playing = false;
                     gameEnded = true;
                 }
             }
-            System.out.println(shield);
+            if(gameEnded){
+                sm.stopBGMusic();
+                sm.stopAll();
+            }
+
         }
 
     }
@@ -117,10 +135,10 @@ public class roadView extends SurfaceView implements Runnable {
 
                     }
                     for(Police police: gameObjects.getPolice()){
-                        if(police.getX() <= -screenX){
+                        if(police.getX() <= 0){
                             sm.stop("police");
                         }
-                        if(police.getX() == screenX){
+                        if(police.getX() >= screenX-police.getBitmap().getWidth() && police.getX() <= screenX){
                             sm.playSound("police");
                         }
                         canvas.drawBitmap(police.getBitmap(), police.getX(), police.getY(), paint);
@@ -154,6 +172,9 @@ public class roadView extends SurfaceView implements Runnable {
 
     private void nextLevel() throws InterruptedException {
 //        stopLevelSound();
+        sm.stopAll();
+        sm.stopBGMusic();
+        isBGPlaying = false;
         lm.nextLevel();
        canvas = ourHolder.lockCanvas();
        canvas.drawColor(Color.BLACK);
@@ -164,6 +185,7 @@ public class roadView extends SurfaceView implements Runnable {
        canvas.drawBitmap(playBtn, (float) screenX /2, (float) (screenY /2 + 200), paint);
        ourHolder.unlockCanvasAndPost(canvas);
        sm.playSound("next_level");
+
 
 //       playLevelSound();
        pause();
@@ -222,9 +244,10 @@ public class roadView extends SurfaceView implements Runnable {
     public void run() {
         while(playing){
                 try {
+
                     update();
                     draw();
-                } catch (RuntimeException | InterruptedException e) {
+                } catch (RuntimeException | InterruptedException | IOException e) {
                     throw new RuntimeException(e);
                 }
                 control();
