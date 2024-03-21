@@ -26,9 +26,9 @@ public class MainActivity extends Activity implements View.OnClickListener {
 
 
         final Button buttonPlay = findViewById(R.id.buttonPlay);
-        final TextView textFastestTime = findViewById(R.id.texthighScore);
-        long LongestDistance = prefs.getLong("LongestDistance", 1000000);
-        textFastestTime.setText("Longest Distance :" + LongestDistance);
+        final TextView textLongestDistance = findViewById(R.id.texthighScore);
+        long LongestDistance = prefs.getLong("LongestDistance", 1000);
+        textLongestDistance.setText("Longest Distance :" + LongestDistance + "m");
         // Listen for clicks
         buttonPlay.setOnClickListener(this);
     }

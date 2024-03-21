@@ -15,12 +15,14 @@ public class Blockade {
     private final Rect hitBox;
     private int frameWidth, frameHeight;
     private int playerHeight;
+    private Context context;
     private int level;
     private boolean visible = true;
 
     public Blockade(Context context, int screenX, int screenY, int y,int x, int playerheight){
         maxX = screenX;
         maxY = screenY;
+        this.context = context;
         this.playerHeight = playerheight;
 
         bitmap = BitmapFactory.decodeResource
@@ -37,7 +39,18 @@ public class Blockade {
         Random generator = new Random();
         x -= playerSpeed*10;
 
+
         if(x < frameWidth){
+            int i = generator.nextInt(2);
+            if(i == 0){
+                bitmap = BitmapFactory.decodeResource
+                        (context.getResources(), R.drawable.blockade);
+                bitmap = Bitmap.createScaledBitmap(bitmap, bitmap.getWidth()/2, bitmap.getHeight()/2, false);
+            } else {
+                bitmap = BitmapFactory.decodeResource
+                        (context.getResources(), R.drawable.pothole);
+                bitmap = Bitmap.createScaledBitmap(bitmap, bitmap.getWidth()/8, bitmap.getHeight()/8, false);
+            }
         if (level == 3) {
             x = maxX*generator.nextInt(3);
             int sety = generator.nextInt(4);

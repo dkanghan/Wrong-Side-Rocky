@@ -57,6 +57,7 @@ public class GameObjects {
                 break;
             case 3:
                 player = new Rocky(context, screenX, screenY,(screenY/2) - (roadBitmap.getHeight()/2) + playerHeight/2, screenY/2 + roadBitmap.getHeight()/2 - 3*playerHeight/2);
+                player.increaseSpeed();
                 shield = new Shield(context,screenX,screenY,playerHeight);
                 cars.add(new trafficCars(context, screenX, screenY,screenY/2 - playerHeight));
                 cars.add(new trafficCars(context, screenX, screenY,screenY/2 + playerHeight/2));

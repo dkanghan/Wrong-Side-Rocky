@@ -55,6 +55,7 @@ public class Rocky {
     public void stopBoosting(){
         speed -= 1;
     }
+    public void increaseSpeed(){ speed += 1;}
 
     public void update() {
         if (speed > MAX_SPEED) {
