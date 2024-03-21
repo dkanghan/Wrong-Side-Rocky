@@ -41,7 +41,6 @@ public class roadView extends SurfaceView implements Runnable {
     private long longestDistance;
     private final SharedPreferences prefs;
     private final SharedPreferences.Editor editor;
-    private boolean pause;
 
 
     public roadView(Context context, int x, int y) {
@@ -57,7 +56,6 @@ public class roadView extends SurfaceView implements Runnable {
 
     }
     private void startGame(){
-        pause = false;
         lm = new LevelManager();
         isBGPlaying = false;
         playing = true;
@@ -322,20 +320,16 @@ public class roadView extends SurfaceView implements Runnable {
         sm.stopBGMusic();
         isBGPlaying = false;
         lm.nextLevel();
-       canvas = ourHolder.lockCanvas();
-       canvas.drawColor(Color.BLACK);
-       paint.setColor(Color.YELLOW);
-       paint.setTextSize(120);
-       paint.setTextAlign(Paint.Align.CENTER);
-       canvas.drawText("NEXT LEVEL : "+(Integer.toString(lm.getCurrentLevel())), canvas.getWidth()/2, canvas.getHeight()/2 , paint);
-       canvas.drawBitmap(playBtn, (float) screenX /2, (float) (screenY /2 + 200), paint);
-       ourHolder.unlockCanvasAndPost(canvas);
-       sm.playSound("next_level");
-
-       pause();
-
-
-
+        canvas = ourHolder.lockCanvas();
+        canvas.drawColor(Color.BLACK);
+        paint.setColor(Color.YELLOW);
+        paint.setTextSize(120);
+        paint.setTextAlign(Paint.Align.CENTER);
+        canvas.drawText("NEXT LEVEL : "+(Integer.toString(lm.getCurrentLevel())), canvas.getWidth()/2, canvas.getHeight()/2 , paint);
+        canvas.drawBitmap(playBtn, (float) screenX /2, (float) (screenY /2 + 200), paint);
+        ourHolder.unlockCanvasAndPost(canvas);
+        sm.playSound("next_level");
+        pause();
     }
     private void control(){
         try {
@@ -347,7 +341,7 @@ public class roadView extends SurfaceView implements Runnable {
 
     public void pause() {
         playing = false;
-        pause = true;
+
         try {
             gameThread.join();
         } catch (InterruptedException ignored) {
@@ -356,7 +350,6 @@ public class roadView extends SurfaceView implements Runnable {
 
     public void resume() {
         playing = true;
-        pause = false;
         gameThread = new Thread(this);
         gameThread.start();
     }
@@ -393,18 +386,14 @@ public class roadView extends SurfaceView implements Runnable {
                         gameObjects.initializeObjects(lm.getCurrentLevel());
                         sm.stop("next_level");
                         resume();
+                    } else if(touchX >= screenX - 148 && touchX <= screenX + 148 && touchY >= 60 - 48 && touchY <= 60 + 48){
+                        resume();
                     }
                 }else{
-                    boolean condition = touchX >= screenX - 148 && touchX <= screenX + 148 && touchY >= 60 - 48 && touchY <= 60 + 48;
-                    if(pause) {
-                        if (condition) {
-                            resume();
-                        }
-                    }else{
-                        if (condition) {
-                            pause();
-                        }
+                    if (touchX >= screenX - 148 && touchX <= screenX + 148 && touchY >= 60 - 48 && touchY <= 60 + 48) {
+                        pause();
                     }
+
                 }
 
                 if(gameEnded){
