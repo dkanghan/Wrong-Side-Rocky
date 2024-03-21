@@ -2,6 +2,7 @@ package com.example.wrongsiderocky;
 
 import android.content.Context;
 import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 
 import java.util.ArrayList;
 
@@ -14,6 +15,7 @@ public class GameObjects {
     private Shield shield;
     private Rocky player;
     private Bitmap roadBitmap;
+    private Bitmap pauseBitmap;
 
     private final int screenX;
     private final int screenY;
@@ -30,9 +32,10 @@ public class GameObjects {
         cars = new ArrayList<>();
         police = new ArrayList<>();
         roadObjects = new ArrayList<>();
+        pauseBitmap = BitmapFactory.decodeResource
+                (context.getResources(), R.drawable.pause);
+        pauseBitmap = Bitmap.createScaledBitmap(pauseBitmap, 48,48, false);
     }
-
-
 
     public void initializeObjects(int level){
         cars.clear();
@@ -100,6 +103,10 @@ public class GameObjects {
         if(level>1 ){
             shield.update(player.getSpeed(), playerHeight);
         }
+    }
+
+    public Bitmap getPauseBitmap() {
+        return pauseBitmap;
     }
     public Bitmap getRoadBitmap() {
         return roadBitmap;

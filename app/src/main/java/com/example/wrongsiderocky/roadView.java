@@ -41,6 +41,7 @@ public class roadView extends SurfaceView implements Runnable {
     private long longestDistance;
     private final SharedPreferences prefs;
     private final SharedPreferences.Editor editor;
+    private boolean pause;
 
 
     public roadView(Context context, int x, int y) {
@@ -56,6 +57,7 @@ public class roadView extends SurfaceView implements Runnable {
 
     }
     private void startGame(){
+        pause = false;
         lm = new LevelManager();
         isBGPlaying = false;
         playing = true;
@@ -200,16 +202,18 @@ public class roadView extends SurfaceView implements Runnable {
             paint.setColor(Color.argb(255, 255, 255, 255));
             if(playing){
 
-            canvas.drawBitmap(gameObjects.getRoadBitmap(), gameObjects.getRoad().getX(),gameObjects.getRoad().getY() , paint);
-            canvas.drawBitmap(
-                    gameObjects.getPlayer().getBitmap(),
-                    gameObjects.getPlayer().getX(),
-                    gameObjects.getPlayer().getY(),
-                    paint
-            );
+                canvas.drawBitmap(gameObjects.getPauseBitmap(), screenX - 100, 60 ,paint);
 
-            canvas.drawBitmap(healthbar1.getBitmap(), healthbar1.getX(), healthbar1.getY(),paint);
-            canvas.drawBitmap(healthbar2.getBitmap(), healthbar2.getX(), healthbar2.getY(),paint);
+                canvas.drawBitmap(gameObjects.getRoadBitmap(), gameObjects.getRoad().getX(),gameObjects.getRoad().getY() , paint);
+                canvas.drawBitmap(
+                        gameObjects.getPlayer().getBitmap(),
+                        gameObjects.getPlayer().getX(),
+                        gameObjects.getPlayer().getY(),
+                        paint
+                );
+
+                canvas.drawBitmap(healthbar1.getBitmap(), healthbar1.getX(), healthbar1.getY(),paint);
+                canvas.drawBitmap(healthbar2.getBitmap(), healthbar2.getX(), healthbar2.getY(),paint);
 
                 if (lm.getCurrentLevel()!= 1){
 
@@ -343,6 +347,7 @@ public class roadView extends SurfaceView implements Runnable {
 
     public void pause() {
         playing = false;
+        pause = true;
         try {
             gameThread.join();
         } catch (InterruptedException ignored) {
@@ -351,6 +356,7 @@ public class roadView extends SurfaceView implements Runnable {
 
     public void resume() {
         playing = true;
+        pause = false;
         gameThread = new Thread(this);
         gameThread.start();
     }
@@ -388,8 +394,20 @@ public class roadView extends SurfaceView implements Runnable {
                         sm.stop("next_level");
                         resume();
                     }
+                }else{
+                    boolean condition = touchX >= screenX - 148 && touchX <= screenX + 148 && touchY >= 60 - 48 && touchY <= 60 + 48;
+                    if(pause) {
+                        if (condition) {
+                            resume();
+                        }
+                    }else{
+                        if (condition) {
+                            pause();
+                        }
+                    }
                 }
-                else if(gameEnded){
+
+                if(gameEnded){
                     startGame();
                 }
                 break;
