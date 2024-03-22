@@ -36,7 +36,7 @@ public class speedBoost {
         Random generator = new Random();
         x -= playerSpeed*10;
 
-        if(x < frameWidth){
+        if(x < -frameWidth-10){
             if (level == 3) {
                 x = maxX*generator.nextInt(3);
                 int sety = generator.nextInt(4);

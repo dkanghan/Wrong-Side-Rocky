@@ -54,7 +54,7 @@ public class Shield {
         x -= playerSpeed*10;
         Random generator = new Random();
 
-        if (x < minX - frameWidth) {
+        if (x < minX - frameWidth - 10) {
             x = maxX*generator.nextInt(5);
             y = generator.nextInt(2*playerHeight)+maxY/3;
             this.visible = true;

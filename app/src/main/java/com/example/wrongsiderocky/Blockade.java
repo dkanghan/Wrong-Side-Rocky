@@ -40,7 +40,7 @@ public class Blockade {
         x -= playerSpeed*10;
 
 
-        if(x < frameWidth){
+        if(x < -frameWidth-10){
             int i = generator.nextInt(2);
             if(i == 0){
                 bitmap = BitmapFactory.decodeResource
