@@ -7,10 +7,14 @@ import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.view.KeyEvent;
 import android.view.View;
+import android.view.animation.Animation;
+import android.view.animation.TranslateAnimation;
 import android.widget.Button;
+import android.widget.ImageButton;
 import android.widget.TextView;
 
 public class MainActivity extends Activity implements View.OnClickListener {
+    private ImageButton movingCar;
 
     @SuppressLint("SetTextI18n")
     @Override
@@ -29,6 +33,18 @@ public class MainActivity extends Activity implements View.OnClickListener {
         textLongestDistance.setText("Longest Distance :" + LongestDistance + "m");
         // Listen for clicks
         buttonPlay.setOnClickListener(this);
+
+        movingCar = findViewById(R.id.movingCar);
+
+        Animation animation = new TranslateAnimation(
+                Animation.RELATIVE_TO_PARENT, 0f,
+                Animation.RELATIVE_TO_PARENT, 1f,
+                Animation.RELATIVE_TO_PARENT, 0f,
+                Animation.RELATIVE_TO_PARENT, 0f
+        );
+        animation.setDuration(3000);
+        animation.setRepeatCount(Animation.INFINITE);
+        movingCar.startAnimation(animation);
     }
 
 

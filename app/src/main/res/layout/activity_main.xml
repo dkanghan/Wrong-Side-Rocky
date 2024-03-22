@@ -27,4 +27,24 @@
         android:layout_marginEnd="52dp"
         android:text="Highest Score:9999" />
 
+    <ImageView
+        android:id="@+id/staticRaodImage"
+        android:layout_marginTop="32dp"
+        android:layout_alignTop="@id/texthighScore"
+        android:layout_width="match_parent"
+        android:layout_height="231dp"
+        android:src="@drawable/road1"
+        android:scaleType="fitXY"/>
+
+    <ImageButton
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:src="@drawable/car"
+        android:id="@+id/movingCar"
+        android:layout_alignTop="@id/staticRaodImage"
+        android:layout_marginTop="32dp"
+        android:background="@null"
+        />
+
+
 </RelativeLayout>
