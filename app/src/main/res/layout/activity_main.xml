@@ -28,7 +28,7 @@
         android:text="Highest Score:9999" />
 
     <ImageView
-        android:id="@+id/staticRaodImage"
+        android:id="@+id/movingRoad"
         android:layout_marginTop="32dp"
         android:layout_alignTop="@id/texthighScore"
         android:layout_width="match_parent"
@@ -41,7 +41,7 @@
         android:layout_height="wrap_content"
         android:src="@drawable/car"
         android:id="@+id/movingCar"
-        android:layout_alignTop="@id/staticRaodImage"
+        android:layout_alignTop="@id/movingRoad"
         android:layout_marginTop="32dp"
         android:background="@null"
         />

@@ -5,6 +5,7 @@ import android.app.Activity;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
+
 import android.view.KeyEvent;
 import android.view.View;
 import android.view.animation.Animation;
@@ -18,8 +19,7 @@ public class MainActivity extends Activity implements View.OnClickListener {
 
     @SuppressLint("SetTextI18n")
     @Override
-    protected void onCreate(Bundle savedInstanceState)
-    {
+    protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
@@ -36,15 +36,16 @@ public class MainActivity extends Activity implements View.OnClickListener {
 
         movingCar = findViewById(R.id.movingCar);
 
-        Animation animation = new TranslateAnimation(
+
+        Animation carAnimation = new TranslateAnimation(
                 Animation.RELATIVE_TO_PARENT, 0f,
                 Animation.RELATIVE_TO_PARENT, 1f,
                 Animation.RELATIVE_TO_PARENT, 0f,
                 Animation.RELATIVE_TO_PARENT, 0f
         );
-        animation.setDuration(3000);
-        animation.setRepeatCount(Animation.INFINITE);
-        movingCar.startAnimation(animation);
+        carAnimation.setDuration(3000);
+        carAnimation.setRepeatCount(Animation.INFINITE);
+        movingCar.startAnimation(carAnimation);
     }
 
 
