@@ -38,12 +38,12 @@ public class MainActivity extends Activity implements View.OnClickListener {
 
 
         Animation carAnimation = new TranslateAnimation(
-                Animation.RELATIVE_TO_PARENT, 0f,
+                Animation.RELATIVE_TO_PARENT, -1f,
                 Animation.RELATIVE_TO_PARENT, 1f,
                 Animation.RELATIVE_TO_PARENT, 0f,
                 Animation.RELATIVE_TO_PARENT, 0f
         );
-        carAnimation.setDuration(3000);
+        carAnimation.setDuration(2000);
         carAnimation.setRepeatCount(Animation.INFINITE);
         movingCar.startAnimation(carAnimation);
     }

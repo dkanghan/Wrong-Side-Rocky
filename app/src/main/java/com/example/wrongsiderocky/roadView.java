@@ -14,6 +14,8 @@ import android.view.SurfaceHolder;
 import android.view.SurfaceView;
 
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
 
 public class roadView extends SurfaceView implements Runnable {
 
@@ -87,9 +89,13 @@ public class roadView extends SurfaceView implements Runnable {
                 sm.playBgMusic(lm.getCurrentLevel());
                 isBGPlaying = true;
             }
-            if (distance++ == 100 || distance == 2000 || distance == 2001) {
-                nextLevel();
-            }
+
+                if (distance++ == 1000 || distance == 6000 || distance == 6001) {
+                    if(lm.getCurrentLevel()<3) {
+                    nextLevel();
+                    }
+                }
+
             gameObjects.updateObjects();
 
             if (lm.getCurrentLevel() != 1) {
