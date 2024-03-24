@@ -42,6 +42,7 @@ public class roadView extends SurfaceView implements Runnable {
     private healthbar healthbar1, healthbar2;
     private long timeTaken, timeStarted;
     private long longestDistance;
+    private int score;
     private final SharedPreferences prefs;
     private final SharedPreferences.Editor editor;
 
@@ -68,6 +69,7 @@ public class roadView extends SurfaceView implements Runnable {
         boostingdistance = 0;
         gameObjects = new GameObjects(context, screenX, screenY);
         distance = 0;
+        score = 0;
         gameObjects.initializeObjects(lm.getCurrentLevel());
         shield = 0;
         collisionDetected = false;
@@ -101,7 +103,7 @@ public class roadView extends SurfaceView implements Runnable {
             if (lm.getCurrentLevel() != 1) {
                 if (Rect.intersects(gameObjects.getPlayer().getHitbox(), gameObjects.getShield().getHitbox())) {
                     if (shield < 4) {
-
+                        score += 50;
                         sm.playSound("extra_life");
                         gameObjects.getShield().setvisible(false);
                         gameObjects.getShield().setX(-screenX);
@@ -129,6 +131,7 @@ public class roadView extends SurfaceView implements Runnable {
                 if (Rect.intersects(gameObjects.getPlayer().getHitbox(), gameObjects.getSpeedBoost().getHitbox())) {
                     boosting = true;
                     boostingdistance = distance;
+                    score += 50;
                 }
                 if (boosting) {
                     if (distance - boostingdistance <= 50) {
