@@ -14,8 +14,6 @@ import android.view.SurfaceHolder;
 import android.view.SurfaceView;
 
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.List;
 
 public class roadView extends SurfaceView implements Runnable {
 
@@ -30,9 +28,9 @@ public class roadView extends SurfaceView implements Runnable {
     private Context context;
     int shield;
     private GameObjects gameObjects;
-    LevelManager lm;
+    private LevelManager lm;
     private boolean collisionDetected, hitDetected;
-    SoundManager sm;
+    private SoundManager sm;
 
     private boolean isBGPlaying;
     private int distance;
@@ -327,7 +325,7 @@ public class roadView extends SurfaceView implements Runnable {
         return stringTime;
     }
 
-    private void nextLevel() throws InterruptedException {
+    private void nextLevel(){
         sm.stopAll();
         sm.stopBGMusic();
         isBGPlaying = false;
@@ -337,7 +335,7 @@ public class roadView extends SurfaceView implements Runnable {
         paint.setColor(Color.YELLOW);
         paint.setTextSize(120);
         paint.setTextAlign(Paint.Align.CENTER);
-        canvas.drawText("NEXT LEVEL : " + (Integer.toString(lm.getCurrentLevel())), canvas.getWidth() / 2, canvas.getHeight() / 2, paint);
+        canvas.drawText("NEXT LEVEL : " + (lm.getCurrentLevel()), (float) canvas.getWidth() / 2, (float) canvas.getHeight() / 2, paint);
         canvas.drawBitmap(playBtn, (float) screenX / 2, (float) (screenY / 2 + 200), paint);
         ourHolder.unlockCanvasAndPost(canvas);
         sm.playSound("next_level");
@@ -388,7 +386,8 @@ public class roadView extends SurfaceView implements Runnable {
         switch (motionEvent.getAction() & MotionEvent.ACTION_MASK) {
             case MotionEvent.ACTION_MOVE:
                 if (gameObjects.getPlayer().getX() < touchX) {
-                    gameObjects.getPlayer().setX(touchX);
+                    gameObjects.getPlayer().setX(Math.min(touchX, screenX / 2));
+
                 }
                 gameObjects.getPlayer().setY(touchY);
                 break;
@@ -416,5 +415,16 @@ public class roadView extends SurfaceView implements Runnable {
                 break;
         }
         return true;
+    }
+
+    public GameObjects getGameObjects() {
+        return gameObjects;
+    }
+
+    public LevelManager getLm() {
+        return lm;
+    }
+    public SoundManager getSm() {
+        return sm;
     }
 }

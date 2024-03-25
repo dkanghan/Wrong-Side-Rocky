@@ -10,7 +10,6 @@ public class Rocky {
     private int x,y;
     private int speed = 0;
     private Rect hitBox;
-    private boolean boosting = false;
     private int maxY;
     private int minY;
     private int maxX;
@@ -47,7 +46,11 @@ public class Rocky {
     }
 
     public void setY(int y) {
-        this.y = y;
+
+        if (y <= minY) {
+            this.y = minY;
+        }
+        else this.y = Math.min(y, maxY);
     }
     public void startBoosting(){
         speed += 1;
