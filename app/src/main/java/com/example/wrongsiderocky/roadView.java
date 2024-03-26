@@ -127,7 +127,7 @@ public class roadView extends SurfaceView implements Runnable {
             }
 
             //Checks condition to move to next level
-            if (distance++ == 1000 || distance == 6000 || distance == 6001) {
+            if (distance++ == 1000 || (distance > 6000 && distance < 6050)) {
                 if(lm.getCurrentLevel()<3) {
                     nextLevel();
                 }
