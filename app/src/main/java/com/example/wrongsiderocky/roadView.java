@@ -15,9 +15,13 @@ import android.view.SurfaceView;
 
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 
+
+//-----------------------------------------------------------------------
+//RoadView
+//Handles CLass Initialization for the game and starts the game
+//-----------------------------------------------------------------------
 public class roadView extends SurfaceView implements Runnable {
 
     private final int screenX;
@@ -44,19 +48,24 @@ public class roadView extends SurfaceView implements Runnable {
     private long timeTaken, timeStarted;
     private long longestDistance;
     private int score;
-    private String playerName;
-    private final SharedPreferences prefs;
+    private final String playerName;
     private final SharedPreferences.Editor editor;
     private ArrayList<Player> leaderboard;
 
 
+    //-----------------------------------------------------------------------
+    //Constructor
+    //gets playerName and current highest score
+    //initializes classes and other variables necessary for the game
+    //initializes paint and Holder for the draw method
+    //-----------------------------------------------------------------------
     public roadView(Context context, int x, int y) {
         super(context);
         this.context = context;
 
-        prefs = context.getSharedPreferences("HiScores", Context.MODE_PRIVATE);
+        SharedPreferences prefs = context.getSharedPreferences("HiScores", Context.MODE_PRIVATE);
         editor = prefs.edit();
-        longestDistance = prefs.getLong("LongestDistance", 1000);
+        longestDistance = prefs.getLong("LongestDistance", 2200);
         screenX = x;
         screenY = y;
         playerName = prefs.getString("PlayerName", "");
@@ -66,6 +75,10 @@ public class roadView extends SurfaceView implements Runnable {
 
     }
 
+    //-----------------------------------------------------------------------
+    //startGame()
+    //Reinitializes variables and classes to replay the game
+    //-----------------------------------------------------------------------
     private void startGame() {
         lm = new LevelManager();
         isBGPlaying = false;
@@ -83,8 +96,8 @@ public class roadView extends SurfaceView implements Runnable {
         gameEnded = false;
         playBtn = BitmapFactory.decodeResource(context.getResources(), R.drawable.playbtn);
         playBtn = Bitmap.createScaledBitmap(playBtn, 48, 48, true);
-        healthbar1 = new healthbar(context, screenX, screenY, 1);
-        healthbar2 = new healthbar(context, screenX, screenY, 2);
+        healthbar1 = new healthbar(context, 1);
+        healthbar2 = new healthbar(context, 2);
         sm = new SoundManager();
         sm.loadSound(context);
         timeTaken = 0;
@@ -94,22 +107,38 @@ public class roadView extends SurfaceView implements Runnable {
 
 
 
+    //-----------------------------------------------------------------------
+    //update()
+    //Updates background music based on level
+    //Updates gameObjects for them to move
+    //Handles healthbar frames accordingly
+    //Handles Boosting of player
+    //Updates longest distance when reached
+    //plays sound effects when collision detected
+    //moves to next level when desired condition fulfilled
+    //-----------------------------------------------------------------------
     private void update() throws RuntimeException, InterruptedException, IOException {
+        //if player is playing
         if (playing) {
+            //play background music of current level if not playing
             if (!isBGPlaying) {
                 sm.playBgMusic(lm.getCurrentLevel());
                 isBGPlaying = true;
             }
 
-                if (distance++ == 1000 || distance == 6000 || distance == 6001) {
-                    if(lm.getCurrentLevel()<3) {
+            //Checks condition to move to next level
+            if (distance++ == 1000 || distance == 6000 || distance == 6001) {
+                if(lm.getCurrentLevel()<3) {
                     nextLevel();
-                    }
                 }
+            }
 
+            //Update gameObjects
             gameObjects.updateObjects();
 
             if (lm.getCurrentLevel() != 1) {
+                //checks if player intersected shield power-up
+                //if yes increase health bar and points accordingly
                 if (Rect.intersects(gameObjects.getPlayer().getHitbox(), gameObjects.getShield().getHitbox())) {
                     if (shield < 4) {
                         score += 50;
@@ -137,22 +166,29 @@ public class roadView extends SurfaceView implements Runnable {
 
                 }
 
+                //checks if player intersected speedBoost power-up
+                //if yes increase speed and set distance of boost
+                //increase score
                 if (Rect.intersects(gameObjects.getPlayer().getHitbox(), gameObjects.getSpeedBoost().getHitbox())) {
                     boosting = true;
                     boostingdistance = distance;
                     score += 50;
                 }
                 if (boosting) {
+                    //boosting until condition reached
                     if (distance - boostingdistance <= 50) {
                         distance += 5;
                         gameObjects.getPlayer().startBoosting();
                     } else {
                         gameObjects.getPlayer().stopBoosting();
                     }
+
                 }
 
             }
 
+            //checks if player collided with a car
+            //if yes decrease health bar accordingly
             if (collisionDetected) {
                 if (shield > 1) {
                     sm.playSound("explode");
@@ -170,13 +206,16 @@ public class roadView extends SurfaceView implements Runnable {
                     shield -= 2;
                     collisionDetected = false;
                 } else {
+                    //if not enough health
+                    //end game
                     sm.playSound("explode");
                     sm.stopAll();
                     playing = false;
                     gameEnded = true;
                 }
             }
-
+            //checks if player collided with a blockade
+            //if yes decrease health bar accordingly
             if (hitDetected) {
                 if (shield > 0) {
                     shield--;
@@ -189,6 +228,8 @@ public class roadView extends SurfaceView implements Runnable {
                     }
 
                 } else {
+                    //if not enough health
+                    //end game
                     sm.playSound("explode");
                     sm.stopAll();
                     playing = false;
@@ -196,26 +237,34 @@ public class roadView extends SurfaceView implements Runnable {
                 }
 
             }
+            //if game ends
+            //stop background music
+            //update leaderboard
             if (gameEnded) {
                 sm.stopBGMusic();
                 updateLeaderboard();
-
+                //calculate if distance travelled is a high score
+                timeTaken = System.currentTimeMillis() - timeStarted;
+                if (distance > longestDistance) {
+                    editor.putLong("LongestDistance", distance);
+                    editor.commit();
+                    longestDistance = distance;
+                }
             }
-            timeTaken = System.currentTimeMillis() - timeStarted;
-            if (distance > longestDistance) {
-                editor.putLong("LongestDistance", distance);
-                editor.commit();
-                longestDistance = distance;
-            }
-
         }
-
     }
 
 
+    //-----------------------------------------------------------------------
+    //draw()
+    //draw gameObjects
+    //Handles healthbar frames accordingly
+    //if game ended
+    //show score and leaderboard
+    //-----------------------------------------------------------------------
     private void draw() throws RuntimeException {
         if (ourHolder.getSurface().isValid()) {
-
+            //initialize and set canvas
             canvas = ourHolder.lockCanvas();
             canvas.drawColor(Color.argb(255,
                     0,
@@ -223,31 +272,27 @@ public class roadView extends SurfaceView implements Runnable {
                     0));
             paint.setColor(Color.argb(255, 255, 255, 255));
             if (playing) {
-
+                //draw pause button
                 canvas.drawBitmap(gameObjects.getPauseBitmap(), screenX - 100, 60, paint);
-
+                //draw road bitmap
                 canvas.drawBitmap(gameObjects.getRoadBitmap(), gameObjects.getRoad().getX(), gameObjects.getRoad().getY(), paint);
-                canvas.drawBitmap(
-                        gameObjects.getPlayer().getBitmap(),
-                        gameObjects.getPlayer().getX(),
-                        gameObjects.getPlayer().getY(),
-                        paint
-                );
 
+                //draw player bitmap
+                canvas.drawBitmap(gameObjects.getPlayer().getBitmap(), gameObjects.getPlayer().getX(), gameObjects.getPlayer().getY(),paint );
+
+                //draw healthbar
                 canvas.drawBitmap(healthbar1.getBitmap(), healthbar1.getX(), healthbar1.getY(), paint);
                 canvas.drawBitmap(healthbar2.getBitmap(), healthbar2.getX(), healthbar2.getY(), paint);
 
                 if (lm.getCurrentLevel() != 1) {
-
+                    //if shield is visible
+                    //draw shield
                     if (gameObjects.getShield().isVisible()) {
-                        canvas.drawBitmap(
-                                gameObjects.getShield().getBitmap(),
-                                gameObjects.getShield().getX(),
-                                gameObjects.getShield().getY(),
-                                paint
-                        );
-
+                        canvas.drawBitmap( gameObjects.getShield().getBitmap(), gameObjects.getShield().getX(), gameObjects.getShield().getY(), paint);
                     }
+                    //draw police object
+                    //play sound effect when police enters the screen
+                    //check if police intersects player
                     for (Police police : gameObjects.getPolice()) {
                         if (police.getX() <= 0) {
                             sm.stop("police");
@@ -262,28 +307,26 @@ public class roadView extends SurfaceView implements Runnable {
                         }
                     }
 
-                    canvas.drawBitmap(
-                            gameObjects.getBlockade().getBitmap(),
-                            gameObjects.getBlockade().getX(),
-                            gameObjects.getBlockade().getY(),
-                            paint
-                    );
-                    canvas.drawBitmap(
-                            gameObjects.getSpeedBoost().getBitmap(),
-                            gameObjects.getSpeedBoost().getX(),
-                            gameObjects.getSpeedBoost().getY(),
-                            paint
-                    );
+                    //draw blockade objects
+                    canvas.drawBitmap(gameObjects.getBlockade().getBitmap(), gameObjects.getBlockade().getX(), gameObjects.getBlockade().getY(), paint);
+
+                    //draw speed boost object
+                    canvas.drawBitmap(gameObjects.getSpeedBoost().getBitmap(), gameObjects.getSpeedBoost().getX(), gameObjects.getSpeedBoost().getY(), paint);
+
+                    //check if player intersects blockade
                     if (Rect.intersects(gameObjects.getPlayer().getHitbox(), gameObjects.getBlockade().getHitbox())) {
                         hitDetected = true;
                         gameObjects.getBlockade().setX(-screenX - 100);
                     }
+                    //check if player picks up speed boost
                     if (Rect.intersects(gameObjects.getPlayer().getHitbox(), gameObjects.getSpeedBoost().getHitbox())) {
                         gameObjects.getSpeedBoost().setX(-screenX - 100);
                     }
 
                 }
 
+                //draw traffic cars
+                //checks if player intersects traffic cars
                 for (trafficCars car : gameObjects.getCars()) {
                     canvas.drawBitmap(car.getBitmap(), car.getX(), car.getY(), paint);
                     if (Rect.intersects(gameObjects.getPlayer().getHitbox(), car.getHitbox())) {
@@ -292,21 +335,32 @@ public class roadView extends SurfaceView implements Runnable {
                     }
                 }
 
-                for (roadObjects roadObjects : gameObjects.getLamp()) {
-                    canvas.drawBitmap(roadObjects.getBitmap(), roadObjects.getX(), roadObjects.getY(), paint);
+                //draw road objects
+                if(lm.getCurrentLevel()!=3)
+                {
+                    for (roadObjects roadObjects : gameObjects.getLamp()) {
+                        canvas.drawBitmap(roadObjects.getBitmap(), roadObjects.getX(), roadObjects.getY(), paint);
+                    }
                 }
 
             }
+
+            // if game not ended
+            // show current stat of player
             if (!gameEnded) {
                 timeTaken = System.currentTimeMillis() - timeStarted;
                 paint.setTextAlign(Paint.Align.LEFT);
                 paint.setColor(Color.argb(255, 255, 255, 255));
                 paint.setTextSize(25);
-                canvas.drawText("Distance:" +
+                canvas.drawText("Power Up Score : " + score +"  Distance:" +
                         distance +
-                        "m", screenX - 300, screenY - 50, paint);
+                        "m", screenX - 500, screenY - 50, paint);
 
             } else {
+                //If game ends
+                //give option to replay the game
+                //show current player stat
+                //show leaderboard
                 paint.setTextSize(80);
                 paint.setTextAlign(Paint.Align.CENTER);
                 canvas.drawText("Game Over", (float) screenX / 2, 100, paint);
@@ -333,6 +387,10 @@ public class roadView extends SurfaceView implements Runnable {
         }
     }
 
+    //-----------------------------------------------------------------------
+    //pause()
+    //pause game
+    //-----------------------------------------------------------------------
     public void pause() {
         playing = false;
         try {
@@ -341,6 +399,10 @@ public class roadView extends SurfaceView implements Runnable {
         }
     }
 
+    //-----------------------------------------------------------------------
+    //resume()
+    //resume game
+    //-----------------------------------------------------------------------
     public void resume() {
         playing = true;
         gameThread = new Thread(this);
@@ -348,11 +410,14 @@ public class roadView extends SurfaceView implements Runnable {
     }
 
 
+    //-----------------------------------------------------------------------
+    //run()
+    //calls update(),draw() and control()
+    //-----------------------------------------------------------------------
     @Override
     public void run() {
         while (playing) {
             try {
-
                 update();
                 draw();
             } catch (RuntimeException | InterruptedException | IOException e) {
@@ -362,35 +427,46 @@ public class roadView extends SurfaceView implements Runnable {
         }
     }
 
+    //-----------------------------------------------------------------------
+    //onTouchEvent()
+    //checks for touch event happening in game
+    //handles player motion
+    //if pause button is pressed or not
+    //restart game if ended
+    //-----------------------------------------------------------------------
     @Override
     public boolean onTouchEvent(MotionEvent motionEvent) {
         int touchX = (int) motionEvent.getX();
         int touchY = (int) motionEvent.getY();
         switch (motionEvent.getAction() & MotionEvent.ACTION_MASK) {
             case MotionEvent.ACTION_MOVE:
+                //get touch coordinates and sets player coordinates accordingly
                 if (gameObjects.getPlayer().getX() < touchX) {
                     gameObjects.getPlayer().setX(Math.min(touchX, screenX / 2));
-
                 }
                 gameObjects.getPlayer().setY(touchY);
                 break;
             case MotionEvent.ACTION_DOWN:
+                //checks for clicks event
+                //if player clicked play button, play the game
+                //if player clicked pause button, pause the game
+                boolean condition = touchX >= screenX - 148 && touchX <= screenX + 148 && touchY >= 60 - 48 && touchY <= 60 + 48;
                 if (!playing) {
                     if (touchX >= screenX / 2 - 24 && touchX <= screenX / 2 + 24 && touchY >= (screenY / 2 + 200) - 24 && touchY <= (screenY / 2 + 200) + 24) {
                         gameObjects.initializeObjects(lm.getCurrentLevel());
                         sm.stop("next_level");
                         resume();
-                    } else if (touchX >= screenX - 148 && touchX <= screenX + 148 && touchY >= 60 - 48 && touchY <= 60 + 48) {
+                    } else if (condition) {
                         resume();
                     }
                 } else {
-                    if (touchX >= screenX - 148 && touchX <= screenX + 148 && touchY >= 60 - 48 && touchY <= 60 + 48) {
+                    if (condition) {
                         pause();
                     }
 
                 }
-
                 if (gameEnded) {
+                    //if game ended restart game
                     Log.d("PRESSED", "onTouchEvent: ");
                     startGame();
                     resume();
@@ -400,17 +476,10 @@ public class roadView extends SurfaceView implements Runnable {
         return true;
     }
 
-    public GameObjects getGameObjects() {
-        return gameObjects;
-    }
-
-    public LevelManager getLm() {
-        return lm;
-    }
-    public SoundManager getSm() {
-        return sm;
-    }
-
+    //-----------------------------------------------------------------------
+    //initializeStubLeaderboard()
+    //initialize stubleaderboard for the player to view
+    //-----------------------------------------------------------------------
     private void initializeStubLeaderboard() {
         // Add some sample players to the leaderboard
         leaderboard.add(new Player("Player5", 2200, 800));
@@ -421,15 +490,24 @@ public class roadView extends SurfaceView implements Runnable {
         saveLeaderboard();
     }
 
+    //-----------------------------------------------------------------------
+    //loadLeaderboard()
+    //gets leaderboard for the player to view
+    //-----------------------------------------------------------------------
     private void loadLeaderboard() {
         SharedPreferences prefs = context.getSharedPreferences("LeaderboardPrefs", Context.MODE_PRIVATE);
         String leaderboardString = prefs.getString("LEADERBOARD", "");
         leaderboard = parseLeaderboardString(leaderboardString);
     }
 
+    //-----------------------------------------------------------------------
+    //parseLeaderboardString()
+    //gets leaderboard for the game from string and converts them to arraylist of player object
+    //-----------------------------------------------------------------------
     private ArrayList<Player> parseLeaderboardString(String leaderboardString) {
         ArrayList<Player> leaderboard = new ArrayList<>();
         if (!leaderboardString.isEmpty()) {
+            //splits the string and retrieves variables to create player objects
             String[] playerEntries = leaderboardString.split(";");
             for (String playerEntry : playerEntries) {
                 String[] playerData = playerEntry.split(",");
@@ -445,6 +523,10 @@ public class roadView extends SurfaceView implements Runnable {
         return leaderboard;
     }
 
+    //-----------------------------------------------------------------------
+    //saveLeaderboard()
+    //gets leaderboard for the game and converts them to string to use them with getSharedPreferences
+    //-----------------------------------------------------------------------
     private void saveLeaderboard() {
         SharedPreferences prefs = context.getSharedPreferences("LeaderboardPrefs", Context.MODE_PRIVATE);
         SharedPreferences.Editor editor = prefs.edit();
@@ -453,9 +535,15 @@ public class roadView extends SurfaceView implements Runnable {
         editor.apply();
 
     }
+
+    //-----------------------------------------------------------------------
+    //convertLeaderboardToString()
+    //gets leaderboard and converts player variables them to string
+    //-----------------------------------------------------------------------
     private String convertLeaderboardToString(List<Player> leaderboard) {
         StringBuilder stringBuilder = new StringBuilder();
         for (Player player : leaderboard) {
+            //converts player variables them to string
             stringBuilder.append(player.getPlayerName()).append(",")
                     .append(player.getHighestDistance()).append(",")
                     .append(player.getHighestScore()).append(",")
@@ -464,6 +552,10 @@ public class roadView extends SurfaceView implements Runnable {
         return stringBuilder.toString();
     }
 
+    //-----------------------------------------------------------------------
+    //updateLeaderboard()
+    //gets current leaderboard and checks if player qualifies to be in the leaderboard, if yes add the player
+    //-----------------------------------------------------------------------
     private void updateLeaderboard() {
         int totalScore = distance + score;
         if (leaderboard.size() < 5 || totalScore > leaderboard.get(leaderboard.size() - 1).getTotalScore()) {
@@ -478,6 +570,10 @@ public class roadView extends SurfaceView implements Runnable {
 
     }
 
+    //-----------------------------------------------------------------------
+    //drawLeaderboard()
+    //gets current leaderboard and draw it when game ends
+    //-----------------------------------------------------------------------
     private void drawLeaderboard(Canvas canvas) {
         paint.setTextSize(40);
         paint.setTextAlign(Paint.Align.CENTER);
@@ -489,6 +585,10 @@ public class roadView extends SurfaceView implements Runnable {
         }
     }
 
+    //-----------------------------------------------------------------------
+    //formatTime()
+    //formats time in a readable manner
+    //-----------------------------------------------------------------------
     private String formatTime(long time) {
         long seconds = (time) / 1000;
         long thousandths = (time) - (seconds * 1000);
@@ -502,6 +602,13 @@ public class roadView extends SurfaceView implements Runnable {
         return seconds + "." + strThousandths;
     }
 
+    //-----------------------------------------------------------------------
+    //nextLevel()
+    //handles tasks required for next level
+    //plays sound effects for player when they reach next level
+    //reinitializes game objects based on new level
+    //pause the game until player clicks on play
+    //-----------------------------------------------------------------------
     private void nextLevel(){
         sm.stopAll();
         sm.stopBGMusic();
@@ -517,5 +624,17 @@ public class roadView extends SurfaceView implements Runnable {
         ourHolder.unlockCanvasAndPost(canvas);
         sm.playSound("next_level");
         pause();
+    }
+
+    //getters and setters for test
+    public GameObjects getGameObjects() {
+        return gameObjects;
+    }
+
+    public LevelManager getLm() {
+        return lm;
+    }
+    public SoundManager getSm() {
+        return sm;
     }
 }

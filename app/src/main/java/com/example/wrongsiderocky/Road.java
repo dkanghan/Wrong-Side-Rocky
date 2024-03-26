@@ -3,34 +3,27 @@ package com.example.wrongsiderocky;
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
-import android.graphics.Rect;
 
-import java.util.Random;
-
+//-----------------------------------------------------------------------
+//Road
+//Class to initialize the road
+// -----------------------------------------------------------------------
 public class Road {
     private Bitmap bitmap;
-    private Bitmap[] bitmapAm;
-
-
-    private int x,y;
-    private int speed = 1;
-    private final int maxY;
-    private final int minY;
-    private final int maxX;
+    private int x;
+    private final int y;
     private final int minX;
-    private final Rect hitBox;
+    private final int frameWidth;
 
-    private int frameWidth, frameHeight;
-    private final int MIN_SPEED = 1;
-    private final int MAX_SPEED = 20;
-
+    //-----------------------------------------------------------------------
+    //Road(context,screenX,screenY,level,playerheight)
+    //initializes the bitmap and variables needed for the class
+    //initialize bitmap based on player height,screen width and number of lanes
+    //-----------------------------------------------------------------------
     public Road(Context context, int screenX, int screenY, int level, int playerheight) {
-        x = 0;
-        maxX = screenX;
-        maxY = screenY;
-        minX = 0;
-        minY = 0;
 
+        x = 0;
+        minX = 0;
         if (level == 1) {
             bitmap = BitmapFactory.decodeResource
                     (context.getResources(), R.drawable.road1);
@@ -46,13 +39,15 @@ public class Road {
                     (context.getResources(), R.drawable.road3);
             bitmap = Bitmap.createScaledBitmap(bitmap, screenX*2, playerheight * 7, false);
         }
-
         y = screenY/2 - bitmap.getHeight()/2 ;
         frameWidth = bitmap.getWidth();
-        frameHeight = bitmap.getHeight();
-        hitBox = new Rect(x, y, frameWidth, frameHeight);
     }
 
+    //------------------------------------------------------------------------------------
+    // Update()
+    // Moves the road
+    // Keeps the road moving
+    //------------------------------------------------------------------------------------
     public void update(int playerSpeed){
         x -= playerSpeed*10;
         if(x < minX-frameWidth/2){
@@ -60,6 +55,8 @@ public class Road {
         }
 
     }
+
+    //getters
     public Bitmap getBitmap() {
         return bitmap;
     }
@@ -69,7 +66,5 @@ public class Road {
     public int getY() {
         return y;
     }
-    public Rect getHitbox(){
-        return hitBox;
-    }
+
 }

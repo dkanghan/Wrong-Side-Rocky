@@ -1,5 +1,4 @@
 package com.example.wrongsiderocky;
-
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
@@ -7,28 +6,33 @@ import android.graphics.Rect;
 
 import java.util.Random;
 
+//-----------------------------------------------------------------------
+//Police
+//Class to initialize the trafficCars Object
+//-----------------------------------------------------------------------
 public class trafficCars {
     private Bitmap bitmap;
     private Bitmap[] bitmapAm;
 
 
     private int x,y;
-    private int speed = 1;
-    private final int maxY;
-    private final int minY;
+    private int speed;
     private final int maxX;
     private final int minX;
     private final Rect hitBox;
-    private final int MIN_SPEED = 1;
-    private final int MAX_SPEED = 20;
-    private int frameCount = 3;
-    private long frameDuration = 100;
     private int frameWidth, frameHeight;
     private int currentFrame;
     private long lastFrameTime;
     private boolean ambulance;
 
-    public trafficCars(Context context, int screenX, int screenY, int y){
+    //-----------------------------------------------------------------------
+    //Constructor
+    //initializes the bitmap and variables for the class
+    //initializes bitmap to either be a normal car or an ambulance
+    //initializes the hitbox for the class
+    //initializes the base x and y coordinates of police object
+    //-----------------------------------------------------------------------
+    public trafficCars(Context context, int screenX, int y){
         Random generator = new Random();
         int cars = generator.nextInt(4);
         if(cars == 0) {
@@ -61,23 +65,27 @@ public class trafficCars {
             bitmap = BitmapFactory.decodeResource
                     (context.getResources(), R.drawable.mini_truck);
         }
-
-
         maxX = screenX;
-        maxY = screenY;
         minX = 0;
-        minY = 0;
         this.y = y;
         if(ambulance){
             hitBox = new Rect(x, y, frameWidth, frameHeight);
         }else {
             hitBox = new Rect(x, y, bitmap.getWidth(), bitmap.getHeight());
         }
+        speed = 1;
         speed = generator.nextInt(6)+10;
         x = screenX;
 
 
     }
+
+    //------------------------------------------------------------------------------------
+    // Update()
+    // Moves the traffic cars
+    // Change the bitmap
+    // Respawns the new bitmap on the screen when trafficCar object moves out of screen
+    //------------------------------------------------------------------------------------
 
     public void update(int playerSpeed, Context context, int maxY,  int playerHeight,int level){
         x -= playerSpeed*3;
@@ -85,11 +93,18 @@ public class trafficCars {
 
         if(ambulance){
             long currentTime = System.currentTimeMillis();
+            long frameDuration = 100;
+
+            //manage bitmap frame
+            //increase frame
             if (currentTime - lastFrameTime > frameDuration) {
+                int frameCount = 3;
                 currentFrame = (currentFrame + 1) % frameCount;
                 lastFrameTime = currentTime;
             }
 
+            //If object goes out of screen
+            //reInitialize it based on level
             if(x < minX-frameWidth){
                 Random generator = new Random();
                 speed = generator.nextInt(10)+10;
@@ -127,12 +142,15 @@ public class trafficCars {
                 }
             }
 
+            //reinitialize hitbox
             hitBox.left = x;
             hitBox.top = y;
             hitBox.right = x + frameWidth;
             hitBox.bottom = y + frameHeight;
         }
         else {
+            //If object goes out of screen
+            //reInitialize it based on level
             if(x < minX-bitmap.getWidth()){
                 Random generator = new Random();
                 int cars = generator.nextInt(3);
@@ -181,9 +199,9 @@ public class trafficCars {
                         y = maxY/2 - playerHeight/2;
                     }
                 }
-                //y = generator.nextInt(maxY - bitmap.getHeight() + 1) + minY;
             }
 
+            //reinitialize hitbox
             hitBox.left = x;
             hitBox.top = y;
             hitBox.right = x + bitmap.getWidth();
@@ -194,14 +212,7 @@ public class trafficCars {
 
     }
 
-    public int getMAX_SPEED() {
-        return MAX_SPEED;
-    }
-
-    public int getMIN_SPEED() {
-        return MIN_SPEED;
-    }
-
+    //getters and setters
     public Bitmap getBitmap(){
         if (ambulance){
             return bitmapAm[currentFrame];

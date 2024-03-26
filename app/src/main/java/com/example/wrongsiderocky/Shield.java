@@ -9,31 +9,39 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
 
+//-----------------------------------------------------------------------
+//Shield
+//Class to initialize the shield Object
+//-----------------------------------------------------------------------
 public class Shield {
-    private List<Bitmap> bitmaps;
+    private final List<Bitmap> bitmaps;
     private int x, y;
     private final int maxY;
-    private final int minY;
+
     private final int maxX;
     private final int minX;
-    private final int frameDuration = 100;
-    private int frameCount = 8;
+    private final int frameCount = 8;
     private final Rect hitBox;
     private boolean visible = true;
 
-    private int frameWidth, frameHeight;
+    private final int frameWidth;
     private int currentFrame = 0;
     private long lastFrameTime;
 
+    //-----------------------------------------------------------------------
+    //Constructor
+    //initializes the bitmap frames and variables for the class
+    //initializes the hitbox for the class
+    //initializes the base x and y coordinates of object
+    //-----------------------------------------------------------------------
     public Shield(Context context, int screenX, int screenY, int y) {
-        Random generator = new Random();
         bitmaps = new ArrayList<>();
 
         Bitmap shieldBitmap = BitmapFactory.decodeResource(
                 context.getResources(), R.drawable.shield);
 
         frameWidth = shieldBitmap.getWidth() / frameCount;
-        frameHeight = shieldBitmap.getHeight();
+        int frameHeight = shieldBitmap.getHeight();
 
         for (int i = 0; i < frameCount; i++) {
             int startX = i * frameWidth;
@@ -44,22 +52,29 @@ public class Shield {
         maxX = screenX;
         maxY = screenY;
         minX = 0;
-        minY = 0;
         hitBox = new Rect(x, y, bitmaps.get(0).getWidth(), bitmaps.get(0).getHeight());
         this.y = maxY/2 - y;
         x = screenX;
     }
 
+    //------------------------------------------------------------------------------------
+    // Update()
+    // Moves the shield object
+    // Respawns the bitmap on the screen when object moves out of screen
+    //------------------------------------------------------------------------------------
     public void update(int playerSpeed, int playerHeight) {
         x -= playerSpeed*10;
         Random generator = new Random();
 
+        //If object goes out of screen
+        //reInitialize it
         if (x < minX - frameWidth - 10) {
             x = maxX*generator.nextInt(5);
             y = generator.nextInt(2*playerHeight)+maxY/3;
             this.visible = true;
         }
 
+        //reinitialize hitbox
         hitBox.left = x;
         hitBox.top = y;
         hitBox.right = x + bitmaps.get(currentFrame).getWidth();
@@ -67,6 +82,7 @@ public class Shield {
 
         // Update current frame
         long time = System.currentTimeMillis();
+        int frameDuration = 100;
         if (time > lastFrameTime + frameDuration) {
             currentFrame++;
             if (currentFrame >= frameCount) {
@@ -76,8 +92,10 @@ public class Shield {
         }
     }
 
+
+    //getters and setters
     public Bitmap getBitmap() {
-        return bitmaps.get(currentFrame); // Return current frame
+        return bitmaps.get(currentFrame);
     }
 
     public Rect getHitbox() {
@@ -91,13 +109,13 @@ public class Shield {
     public int getY() {
         return y;
     }
+
+    public void setX(int x) {
+        this.x = x;
+    }
     public void setvisible(boolean visible){ this.visible=visible;}
 
     public boolean isVisible() {
         return visible;
-    }
-
-    public void setX(int x) {
-        this.x = x;
     }
 }

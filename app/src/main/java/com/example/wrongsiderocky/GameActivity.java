@@ -6,8 +6,10 @@ import android.os.Bundle;
 import android.view.Display;
 import android.view.KeyEvent;
 
+//-----------------------------------------------------------------------
 //Game Activity
 //initializes and starts the game
+//-----------------------------------------------------------------------
 public class GameActivity extends Activity {
 
     private roadView gameView;
@@ -24,7 +26,6 @@ public class GameActivity extends Activity {
     }
 
     //Method to pause the game
-
     @Override
     protected void onPause() {
         super.onPause();

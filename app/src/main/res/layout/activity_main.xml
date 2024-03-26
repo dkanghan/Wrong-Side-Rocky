@@ -56,7 +56,6 @@
         android:layout_centerHorizontal="true"
         android:layout_marginBottom="16dp"
         android:hint="Enter Player Name"
-        android:textColorHint="#FFFFFF"
         android:inputType="text" />
 
 </RelativeLayout>

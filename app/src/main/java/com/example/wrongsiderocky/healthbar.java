@@ -3,30 +3,35 @@ package com.example.wrongsiderocky;
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
-import android.graphics.Rect;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Random;
+
+//-----------------------------------------------------------------------
+//Blockade
+//Class to initialize the health bar on top left
+//-----------------------------------------------------------------------
 
 public class healthbar {
-    private List<Bitmap> bitmaps;
+    private final List<Bitmap> bitmaps;
     private int x, y;
-    private final int frameDuration = 100;
-    private int frameCount = 3;
-    private final Rect hitBox;
-    private int frameWidth, frameHeight;
+    private final int frameCount = 3;
     private int currentFrame = 0;
     private long lastFrameTime;
-    public healthbar(Context context, int screenX, int screenY, int num){
+
+    //-----------------------------------------------------------------------
+    //Constructor
+    //Initializes the bitmap and sets the position of the bitmap
+    //-----------------------------------------------------------------------
+    public healthbar(Context context, int num){
         bitmaps = new ArrayList<>();
 
         Bitmap healthBitmap = BitmapFactory.decodeResource(
                 context.getResources(), R.drawable.healthbar);
         healthBitmap = Bitmap.createScaledBitmap(healthBitmap, 90,30,true);
 
-        frameWidth = healthBitmap.getWidth() / frameCount;
-        frameHeight = healthBitmap.getHeight();
+        int frameWidth = healthBitmap.getWidth() / frameCount;
+        int frameHeight = healthBitmap.getHeight();
 
         for (int i = 0; i < frameCount; i++) {
             int startX = i * frameWidth;
@@ -34,7 +39,6 @@ public class healthbar {
             bitmaps.add(frameBitmap);
         }
 
-        hitBox = new Rect(x, y, bitmaps.get(0).getWidth(), bitmaps.get(0).getHeight());
         if (num == 1) {
             y = 20;
             x = 20;
@@ -46,9 +50,15 @@ public class healthbar {
 
 
     }
+
+    //-----------------------------------------------------------------------
+    //update()
+    //Checks the current frame of the bitmap and increases it when called
+    //-----------------------------------------------------------------------
     public void update() {
 
         long time = System.currentTimeMillis();
+        int frameDuration = 100;
         if (time > lastFrameTime + frameDuration) {
             currentFrame++;
             if (currentFrame >= frameCount) {
@@ -58,24 +68,31 @@ public class healthbar {
         }
     }
 
+    //-----------------------------------------------------------------------
+    //increaseFrame()
+    //Increases the frame of the bitmap
+    //-----------------------------------------------------------------------
     public void increaseFrame(){
         if(currentFrame<3){
             currentFrame++;
         }
 
     }
+
+    //-----------------------------------------------------------------------
+    //decreaseFrame()
+    //Decreases the frame of the bitmap
+    //-----------------------------------------------------------------------
     public void decreaseFrame(){
         if(currentFrame>0){
             currentFrame--;
         }
     }
 
+
+    //Getters and Setters
     public Bitmap getBitmap() {
         return bitmaps.get(currentFrame); // Return current frame
-    }
-
-    public Rect getHitbox() {
-        return hitBox;
     }
 
     public int getX() {

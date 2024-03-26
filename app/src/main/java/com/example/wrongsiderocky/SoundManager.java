@@ -10,6 +10,10 @@ import android.media.SoundPool;
 import android.util.Log;
 import java.io.IOException;
 
+//-----------------------------------------------------------------------
+//SoundManager
+//Class to manage sound effects and background sound
+//-----------------------------------------------------------------------
 public class SoundManager {
     private SoundPool soundPool;
     private MediaPlayer mediaPlayer;
@@ -26,6 +30,10 @@ public class SoundManager {
     Context context;
 
 
+    //-----------------------------------------------------------------------
+    //loadSound()
+    //Loads sound files for the game
+    //-----------------------------------------------------------------------
     public void loadSound(Context context){
 
         this.context = context;
@@ -68,8 +76,6 @@ public class SoundManager {
             descriptor = assetManager.openFd("hit.ogg");
             hit = soundPool.load(descriptor, 0);
 
-
-
             descriptor = assetManager.openFd("leveltwo.ogg");
             leveltwo = soundPool.load(descriptor, 2);
 
@@ -81,6 +87,11 @@ public class SoundManager {
             Log.e("error", "failed to load sound files");
         }
     }
+
+    //-----------------------------------------------------------------------
+    //playSound()
+    //play sound Effects for the game
+    //-----------------------------------------------------------------------
     public void playSound(String sound){
         switch (sound){
 
@@ -117,6 +128,11 @@ public class SoundManager {
                 break;
         }
     }
+
+    //-----------------------------------------------------------------------
+    //stopSound()
+    //stop sound Effects for the game
+    //-----------------------------------------------------------------------
     public void stop(String sound){
         switch (sound){
 
@@ -154,10 +170,18 @@ public class SoundManager {
         }
     }
 
+    //-----------------------------------------------------------------------
+    //stopAll()
+    //stop all sound Effects currently playing in the game
+    //-----------------------------------------------------------------------
     public void stopAll(){
         soundPool.autoPause();
     }
 
+    //-----------------------------------------------------------------------
+    //playBgMusic()
+    //plays Background Music for the game based on level
+    //-----------------------------------------------------------------------
     public void playBgMusic(int level) throws IOException {
         AssetManager assetManager = this.context.getAssets();
         AssetFileDescriptor descriptor;
@@ -169,6 +193,10 @@ public class SoundManager {
         mediaPlayer.setLooping(true);
     }
 
+    //-----------------------------------------------------------------------
+    //stopBGMusic()
+    //stops Background music in game
+    //-----------------------------------------------------------------------
     public void stopBGMusic(){
         mediaPlayer.stop();
         mediaPlayer.release();

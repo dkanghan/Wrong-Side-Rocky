@@ -5,22 +5,24 @@ import android.graphics.BitmapFactory;
 import android.graphics.Rect;
 import java.util.Random;
 
+//-----------------------------------------------------------------------
 //Blockade
 //Class to initialize the blockade and pothole images
+//-----------------------------------------------------------------------
 public class Blockade {
     private Bitmap bitmap;
     private int x,y;
     private final int maxY;
     private final int maxX;
     private final Rect hitBox;
-    private int frameWidth, frameHeight;
-    private int playerHeight;
-    private Context context;
-    private int level;
-    private boolean visible = true;
+    private final int frameWidth;
+    private final int playerHeight;
+    private final Context context;
 
-    //Constructor
-    //initializes the screen size and variables needed for the class
+    //-----------------------------------------------------------------------
+    //Constructor(context,screenX,screenY,y,x,playerheight)
+    //initializes the bitmap and variables needed for the class
+    //-----------------------------------------------------------------------
     public Blockade(Context context, int screenX, int screenY, int y,int x, int playerheight){
         maxX = screenX;
         maxY = screenY;
@@ -36,12 +38,16 @@ public class Blockade {
         this.y = y ;
         this.x = x;
         frameWidth = bitmap.getWidth();
-        frameHeight = bitmap.getHeight();
+        int frameHeight = bitmap.getHeight();
         hitBox = new Rect(x, y, frameWidth, frameHeight);
     }
 
-    // Update method
-    // Moves the blockade and changes its appearance based on the player's speed and level
+    //------------------------------------------------------------------------------------
+    // Update()
+    // Moves the blockade
+    // Keeps changing appearance once the bitmap is out of screen
+    // Respawns the new bitmap on the screen based on level and lanes
+    //------------------------------------------------------------------------------------
     public void update(int playerSpeed, int level){
         Random generator = new Random();
         x -= playerSpeed*10;
@@ -74,8 +80,6 @@ public class Blockade {
             } else  {
                 y =  maxY/2 - 5*playerHeight/2;
             }
-            this.visible = true;
-
         } else if (level == 2){
             x = maxX*generator.nextInt(5);
             int sety = generator.nextInt(3);
@@ -84,9 +88,8 @@ public class Blockade {
             } else if (sety ==1) {
                 y = maxY/2 + playerHeight/2;
             } else {
-                y = maxY/2 - playerHeight/2;
+                y = maxY / 2 - playerHeight / 2;
             }
-            this.visible = true;
         }
         }
 
@@ -97,6 +100,8 @@ public class Blockade {
         hitBox.bottom = y + bitmap.getHeight();
     }
 
+
+    //Getters and Setters
     public Rect getHitbox(){
         return hitBox;
     }

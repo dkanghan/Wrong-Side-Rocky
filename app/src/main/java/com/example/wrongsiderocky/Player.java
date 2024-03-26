@@ -1,16 +1,19 @@
 package com.example.wrongsiderocky;
 
+//----------------------------------------------------------------------------
+//Player
+//Class to store player name, distance travelled and score for the leaderboard
+//-----------------------------------------------------------------------------
 public class Player {
-    private String playerName;
+    private final String playerName;
     private long highestDistance;
     private int highestScore;
-    private long totalScore;
+
 
     public Player(String playerName, long highestDistance, int highestScore) {
         this.playerName = playerName;
         this.highestDistance = highestDistance;
         this.highestScore = highestScore;
-        this.totalScore = highestScore + highestDistance;
     }
 
     public String getPlayerName() {
@@ -21,16 +24,9 @@ public class Player {
         return highestDistance;
     }
 
-    public void setHighestDistance(long highestDistance) {
-        this.highestDistance = highestDistance;
-    }
 
     public int getHighestScore() {
         return highestScore;
-    }
-
-    public void setHighestScore(int highestScore) {
-        this.highestScore = highestScore;
     }
 
     public long getTotalScore() {
