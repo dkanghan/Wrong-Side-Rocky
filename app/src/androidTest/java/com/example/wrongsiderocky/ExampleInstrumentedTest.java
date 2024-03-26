@@ -18,8 +18,10 @@ public class ExampleInstrumentedTest {
     private int screenWidth,screenHeight;
     private roadView roadViewInstance;
 
+    //-----------------------------------------------------------------------
     //setUp()
     //Initializes variables before performing the test
+    //-----------------------------------------------------------------------
     @Before
     public void setUp() {
        context = InstrumentationRegistry.getInstrumentation().getTargetContext();
@@ -27,20 +29,22 @@ public class ExampleInstrumentedTest {
        screenHeight = 1920;
        roadViewInstance = new roadView(context, screenWidth, screenHeight);
     }
-
+    //-----------------------------------------------------------------------
     //useAppContext()
     //initializes context to use for testing purposes
+    //-----------------------------------------------------------------------
     @Test
     public void useAppContext() {
         // Context of the app under test.
         assertEquals("com.example.wrongsiderocky", context.getPackageName());
     }
 
-
+    //-----------------------------------------------------------------------
     //testInitialization()
     //checks if initialization of roadView and other variable that are initialized in constructor are initialized properly
     //roadView initializes LevelManaer and GameObjects which are important for the game.
     //check if the objects created are properly initialized and not null
+    //-----------------------------------------------------------------------
     @Test
     public void testInitialization(){
 
@@ -61,11 +65,12 @@ public class ExampleInstrumentedTest {
         assertNotNull(go.getShield());
         assertNotNull(go.getPolice());
     }
-
+    //-----------------------------------------------------------------------
     //testgameobjectsInitialization()
     //To test if the objects created by GameObjects class are initialized properly
     //GameObjects create Objects based on the level of the game
     //Test for Objects in each level if they are null or not accordingly.
+    //-----------------------------------------------------------------------
     @Test
     public void testgameobjectsInitialization(){
 
@@ -93,10 +98,12 @@ public class ExampleInstrumentedTest {
 
     }
 
+    //-----------------------------------------------------------------------
     //testUpdateMethod()
     //To test if the update method of class trafficCars, Police, Blockade, Shield are working properly
     //Test if all the Objects are moving in the x-axis as expected
     //Test if police is changing Y-axis according to player
+    //-----------------------------------------------------------------------
     @Test
     public void testUpdateMethod()  {
 
@@ -137,8 +144,10 @@ public class ExampleInstrumentedTest {
 
     }
 
+    //-----------------------------------------------------------------------
     //levelProgression()
     //Test if levels are increasing accordingly
+    //-----------------------------------------------------------------------
     @Test
     public void levelProgression(){
 
@@ -148,11 +157,13 @@ public class ExampleInstrumentedTest {
         assertEquals("After calling nextLevel(), current level should change to 2",2,lm.getCurrentLevel());
     }
 
+    //-----------------------------------------------------------------------
     //playerMove()
     //Test if touch event is working as expected
     //Simulate a MotionEvent with ACTION_MOVE
     //Test if our player moves to the touchevent.
     //Test if player does not move out of road as we as do not move ahead more than screenWidth/2
+    //-----------------------------------------------------------------------
     @Test
     public void playerMove(){
         Rocky player = roadViewInstance.getGameObjects().getPlayer();
@@ -188,8 +199,10 @@ public class ExampleInstrumentedTest {
         moveEvent2.recycle();
     }
 
+    //-----------------------------------------------------------------------
     //testPauseAndResume()
     //Test if player stops playing on pause and starts playing on resume.
+    //-----------------------------------------------------------------------
     @Test
     public void testPauseAndResume() {
         assertTrue(roadViewInstance.playing);
