@@ -14,15 +14,11 @@ public class roadObjects {
     private final int maxX;
     private final Rect hitBox;
     private int frameWidth, frameHeight;
-    private int playerHeight;
-    private int level;
-    private boolean visible = true;
     private Context context;
 
-    public roadObjects(Context context, int screenX, int screenY, int y, int x, int playerheight){
+    public roadObjects(Context context, int screenX, int screenY, int y, int x){
         maxX = screenX;
         maxY = screenY;
-        this.playerHeight = playerheight;
         this.context = context;
         bitmap = BitmapFactory.decodeResource
                 (context.getResources(), R.drawable.lamp1);
@@ -40,7 +36,7 @@ public class roadObjects {
         if(x < frameWidth){
             y = maxY/2 - 7*road.getHeight()/8;
             x = generator.nextInt(maxX)+maxX;
-            int i = generator.nextInt(6);
+            int i = generator.nextInt(5);
             if(i==0){
                 bitmap = BitmapFactory.decodeResource
                         (context.getResources(), R.drawable.lamp1);
@@ -56,11 +52,6 @@ public class roadObjects {
             }else if (i ==4){
                 bitmap = BitmapFactory.decodeResource
                         (context.getResources(), R.drawable.lamp5);
-            }else if (i ==5) {
-                y = maxY/2 - 3*road.getHeight()/4;
-                bitmap = BitmapFactory.decodeResource
-                        (context.getResources(), R.drawable.extinguisher);
-                bitmap = Bitmap.createScaledBitmap(bitmap, 60, 150, false);
             }
         }
 
@@ -70,9 +61,6 @@ public class roadObjects {
         hitBox.bottom = y + bitmap.getHeight();
     }
 
-    public Rect getHitbox(){
-        return hitBox;
-    }
     public int getX() {
         return x;
     }

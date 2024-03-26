@@ -11,9 +11,9 @@
         android:layout_alignParentStart="true"
         android:layout_alignParentEnd="true"
         android:layout_alignParentBottom="true"
-        android:layout_marginStart="304dp"
-        android:layout_marginEnd="302dp"
-        android:layout_marginBottom="47dp"
+        android:layout_marginStart="306dp"
+        android:layout_marginEnd="300dp"
+        android:layout_marginBottom="28dp"
         android:onClick="onClick"
         android:text="Play" />
 
@@ -29,12 +29,12 @@
 
     <ImageView
         android:id="@+id/movingRoad"
-        android:layout_marginTop="32dp"
-        android:layout_alignTop="@id/texthighScore"
         android:layout_width="match_parent"
         android:layout_height="231dp"
-        android:src="@drawable/road1"
-        android:scaleType="fitXY"/>
+        android:layout_alignTop="@id/texthighScore"
+        android:layout_marginTop="38dp"
+        android:scaleType="fitXY"
+        android:src="@drawable/road1" />
 
     <ImageButton
         android:layout_width="wrap_content"
@@ -47,5 +47,16 @@
         android:rotation="180"
         />
 
+    <!-- Add EditText for Player Name -->
+    <EditText
+        android:id="@+id/editTextPlayerName"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_above="@id/buttonPlay"
+        android:layout_centerHorizontal="true"
+        android:layout_marginBottom="16dp"
+        android:hint="Enter Player Name"
+        android:textColorHint="#FFFFFF"
+        android:inputType="text" />
 
 </RelativeLayout>

@@ -45,10 +45,6 @@ public class GameObjects {
         road = new Road(context,screenX,screenY,level,playerHeight);
         roadBitmap = road.getBitmap();
         roadObjects = new ArrayList<>();
-        roadObjects.add(new roadObjects(context,screenX,screenY,screenY/2-7*roadBitmap.getHeight()/8,screenX + screenX/3,playerHeight));
-        roadObjects.add(new roadObjects(context,screenX,screenY,screenY/2-7*roadBitmap.getHeight()/8,screenX + screenX/2,playerHeight));
-        roadObjects.add(new roadObjects(context,screenX,screenY,screenY/2-7*roadBitmap.getHeight()/8,screenX + screenX/4,playerHeight));
-        roadObjects.add(new roadObjects(context,screenX,screenY,screenY/2-7*roadBitmap.getHeight()/8,screenX,playerHeight));
 
         switch (level){
             case 1:
@@ -56,6 +52,10 @@ public class GameObjects {
                 player = new Rocky(context, screenX, screenY,screenY/2 - roadBitmap.getHeight()/2 + playerHeight/2, screenY/2+roadBitmap.getHeight()/2 - 3*playerHeight/2);
                 cars.add(new trafficCars(context, screenX*3/2, screenY,screenY/2 - 3*playerHeight/2));
                 cars.add(new trafficCars(context, screenX, screenY,screenY/2 + playerHeight/2));
+                roadObjects.add(new roadObjects(context,screenX,screenY,screenY/2-7*roadBitmap.getHeight()/8,screenX + screenX/3));
+                roadObjects.add(new roadObjects(context,screenX,screenY,screenY/2-7*roadBitmap.getHeight()/8,screenX + screenX/2));
+                roadObjects.add(new roadObjects(context,screenX,screenY,screenY/2-7*roadBitmap.getHeight()/8,screenX + screenX/4));
+                roadObjects.add(new roadObjects(context,screenX,screenY,screenY/2-7*roadBitmap.getHeight()/8,screenX));
 
                 break;
             case 3:
@@ -68,6 +68,7 @@ public class GameObjects {
                 blockade = new Blockade(context,screenX,screenY,screenY/2 - playerHeight,screenX*2,playerHeight);
                 police.add(new Police(context, screenX, screenY));
                 speedBoost = new speedBoost(context,screenX,screenY,screenY/2 + playerHeight*3/2,screenX,playerHeight);
+
                 break;
             case 2:
                 player = new Rocky(context, screenX, screenY,screenY/2 - roadBitmap.getHeight()/2 + playerHeight/2, screenY/2+roadBitmap.getHeight()/2 - playerHeight);
@@ -76,7 +77,11 @@ public class GameObjects {
                 cars.add(new trafficCars(context, screenX, screenY,screenY/2 - playerHeight/2));
                 cars.add(new trafficCars(context, screenX*3/2, screenY,screenY/2 + playerHeight));
                 blockade = new Blockade(context,screenX,screenY,screenY/2 - playerHeight,screenX,playerHeight);
-                speedBoost = new speedBoost(context,screenX,screenY,screenY/2 - 2*playerHeight,screenX,playerHeight);
+                speedBoost = new speedBoost(context,screenX,screenY,screenY/2 + 2*playerHeight,screenX,playerHeight);
+                roadObjects.add(new roadObjects(context,screenX,screenY,screenY/2-7*roadBitmap.getHeight()/8,screenX + screenX/3));
+                roadObjects.add(new roadObjects(context,screenX,screenY,screenY/2-7*roadBitmap.getHeight()/8,screenX + screenX/2));
+                roadObjects.add(new roadObjects(context,screenX,screenY,screenY/2-7*roadBitmap.getHeight()/8,screenX + screenX/4));
+                roadObjects.add(new roadObjects(context,screenX,screenY,screenY/2-7*roadBitmap.getHeight()/8,screenX));
                 break;
         }
 

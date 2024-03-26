@@ -14,6 +14,9 @@ import android.view.SurfaceHolder;
 import android.view.SurfaceView;
 
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
 
 public class roadView extends SurfaceView implements Runnable {
 
@@ -25,7 +28,7 @@ public class roadView extends SurfaceView implements Runnable {
     private Paint paint;
     private Canvas canvas;
     private SurfaceHolder ourHolder;
-    private Context context;
+    private final Context context;
     int shield;
     private GameObjects gameObjects;
     private LevelManager lm;
@@ -41,8 +44,10 @@ public class roadView extends SurfaceView implements Runnable {
     private long timeTaken, timeStarted;
     private long longestDistance;
     private int score;
+    private String playerName;
     private final SharedPreferences prefs;
     private final SharedPreferences.Editor editor;
+    private ArrayList<Player> leaderboard;
 
 
     public roadView(Context context, int x, int y) {
@@ -54,6 +59,9 @@ public class roadView extends SurfaceView implements Runnable {
         longestDistance = prefs.getLong("LongestDistance", 1000);
         screenX = x;
         screenY = y;
+        playerName = prefs.getString("PlayerName", "");
+        leaderboard = new ArrayList<>();
+        initializeStubLeaderboard();
         startGame();
 
     }
@@ -81,7 +89,10 @@ public class roadView extends SurfaceView implements Runnable {
         sm.loadSound(context);
         timeTaken = 0;
         timeStarted = System.currentTimeMillis();
+        loadLeaderboard();
     }
+
+
 
     private void update() throws RuntimeException, InterruptedException, IOException {
         if (playing) {
@@ -187,6 +198,7 @@ public class roadView extends SurfaceView implements Runnable {
             }
             if (gameEnded) {
                 sm.stopBGMusic();
+                updateLeaderboard();
 
             }
             timeTaken = System.currentTimeMillis() - timeStarted;
@@ -199,6 +211,7 @@ public class roadView extends SurfaceView implements Runnable {
         }
 
     }
+
 
     private void draw() throws RuntimeException {
         if (ourHolder.getSurface().isValid()) {
@@ -306,40 +319,10 @@ public class roadView extends SurfaceView implements Runnable {
                         "s", (float) screenX / 2, 200, paint);
                 paint.setTextSize(80);
                 canvas.drawText("Tap to replay", (float) screenX / 2, 350, paint);
+                drawLeaderboard(canvas);
             }
             ourHolder.unlockCanvasAndPost(canvas);
         }
-    }
-
-    private String formatTime(long time) {
-        long seconds = (time) / 1000;
-        long thousandths = (time) - (seconds * 1000);
-        String strThousandths = String.valueOf(thousandths);
-        if (thousandths < 100) {
-            strThousandths = "0" + thousandths;
-        }
-        if (thousandths < 10) {
-            strThousandths = "0" + strThousandths;
-        }
-        String stringTime = seconds + "." + strThousandths;
-        return stringTime;
-    }
-
-    private void nextLevel(){
-        sm.stopAll();
-        sm.stopBGMusic();
-        isBGPlaying = false;
-        lm.nextLevel();
-        canvas = ourHolder.lockCanvas();
-        canvas.drawColor(Color.BLACK);
-        paint.setColor(Color.YELLOW);
-        paint.setTextSize(120);
-        paint.setTextAlign(Paint.Align.CENTER);
-        canvas.drawText("NEXT LEVEL : " + (lm.getCurrentLevel()), (float) canvas.getWidth() / 2, (float) canvas.getHeight() / 2, paint);
-        canvas.drawBitmap(playBtn, (float) screenX / 2, (float) (screenY / 2 + 200), paint);
-        ourHolder.unlockCanvasAndPost(canvas);
-        sm.playSound("next_level");
-        pause();
     }
 
     private void control() {
@@ -426,5 +409,113 @@ public class roadView extends SurfaceView implements Runnable {
     }
     public SoundManager getSm() {
         return sm;
+    }
+
+    private void initializeStubLeaderboard() {
+        // Add some sample players to the leaderboard
+        leaderboard.add(new Player("Player5", 2200, 800));
+        leaderboard.add(new Player("Player4", 1800, 550));
+        leaderboard.add(new Player("Player3", 1500, 600));
+        leaderboard.add(new Player("Player2", 2000, 700));
+        leaderboard.add(new Player("Player1", 50, 50));
+        saveLeaderboard();
+    }
+
+    private void loadLeaderboard() {
+        SharedPreferences prefs = context.getSharedPreferences("LeaderboardPrefs", Context.MODE_PRIVATE);
+        String leaderboardString = prefs.getString("LEADERBOARD", "");
+        leaderboard = parseLeaderboardString(leaderboardString);
+    }
+
+    private ArrayList<Player> parseLeaderboardString(String leaderboardString) {
+        ArrayList<Player> leaderboard = new ArrayList<>();
+        if (!leaderboardString.isEmpty()) {
+            String[] playerEntries = leaderboardString.split(";");
+            for (String playerEntry : playerEntries) {
+                String[] playerData = playerEntry.split(",");
+                if (playerData.length == 4) {
+                    String playerName = playerData[0];
+                    long highestDistance = Long.parseLong(playerData[1]);
+                    int highestScore = Integer.parseInt(playerData[2]);
+                    Player player = new Player(playerName, highestDistance, highestScore);
+                    leaderboard.add(player);
+                }
+            }
+        }
+        return leaderboard;
+    }
+
+    private void saveLeaderboard() {
+        SharedPreferences prefs = context.getSharedPreferences("LeaderboardPrefs", Context.MODE_PRIVATE);
+        SharedPreferences.Editor editor = prefs.edit();
+        String leaderboardString = convertLeaderboardToString(leaderboard);
+        editor.putString("LEADERBOARD", leaderboardString);
+        editor.apply();
+
+    }
+    private String convertLeaderboardToString(List<Player> leaderboard) {
+        StringBuilder stringBuilder = new StringBuilder();
+        for (Player player : leaderboard) {
+            stringBuilder.append(player.getPlayerName()).append(",")
+                    .append(player.getHighestDistance()).append(",")
+                    .append(player.getHighestScore()).append(",")
+                    .append(player.getTotalScore()).append(";");
+        }
+        return stringBuilder.toString();
+    }
+
+    private void updateLeaderboard() {
+        int totalScore = distance + score;
+        if (leaderboard.size() < 5 || totalScore > leaderboard.get(leaderboard.size() - 1).getTotalScore()) {
+            Player newPlayer = new Player(playerName, distance, score);
+            leaderboard.add(newPlayer);
+            leaderboard.sort((p1, p2) -> Long.compare(p2.getTotalScore(), p1.getTotalScore()));
+            if (leaderboard.size() > 5) {
+                leaderboard = new ArrayList<>(leaderboard.subList(0, 5));
+            }
+            saveLeaderboard();
+        }
+
+    }
+
+    private void drawLeaderboard(Canvas canvas) {
+        paint.setTextSize(40);
+        paint.setTextAlign(Paint.Align.CENTER);
+        int startY = 500;
+        for (int i = 0; i < leaderboard.size(); i++) {
+            Player player = leaderboard.get(i);
+            String playerInfo = "| Player: " + player.getPlayerName() + " | Distance: " + player.getHighestDistance() + "m | Score: " + player.getHighestScore() + " | Total Score: " + player.getTotalScore() + "|";
+            canvas.drawText(playerInfo, (float)screenX/2, startY + i * 50, paint);
+        }
+    }
+
+    private String formatTime(long time) {
+        long seconds = (time) / 1000;
+        long thousandths = (time) - (seconds * 1000);
+        String strThousandths = String.valueOf(thousandths);
+        if (thousandths < 100) {
+            strThousandths = "0" + thousandths;
+        }
+        if (thousandths < 10) {
+            strThousandths = "0" + strThousandths;
+        }
+        return seconds + "." + strThousandths;
+    }
+
+    private void nextLevel(){
+        sm.stopAll();
+        sm.stopBGMusic();
+        isBGPlaying = false;
+        lm.nextLevel();
+        canvas = ourHolder.lockCanvas();
+        canvas.drawColor(Color.BLACK);
+        paint.setColor(Color.YELLOW);
+        paint.setTextSize(120);
+        paint.setTextAlign(Paint.Align.CENTER);
+        canvas.drawText("NEXT LEVEL : " + (lm.getCurrentLevel()), (float) canvas.getWidth() / 2, (float) canvas.getHeight() / 2, paint);
+        canvas.drawBitmap(playBtn, (float) screenX / 2, (float) (screenY / 2 + 200), paint);
+        ourHolder.unlockCanvasAndPost(canvas);
+        sm.playSound("next_level");
+        pause();
     }
 }
