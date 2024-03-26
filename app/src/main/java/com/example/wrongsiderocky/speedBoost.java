@@ -58,7 +58,7 @@ public class speedBoost {
         //y axis based on level
         if(x < -frameWidth-10){
             if (level == 3) {
-                x = maxX*generator.nextInt(3);
+                x = maxX*generator.nextInt(7);
                 int sety = generator.nextInt(4);
                 if(sety == 0){
                     y = maxY/2 - playerHeight;
