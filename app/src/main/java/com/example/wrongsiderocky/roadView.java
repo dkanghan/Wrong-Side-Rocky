@@ -70,7 +70,10 @@ public class roadView extends SurfaceView implements Runnable {
         screenY = y;
         playerName = prefs.getString("PlayerName", "");
         leaderboard = new ArrayList<>();
-        initializeStubLeaderboard();
+        loadLeaderboard();
+        if(leaderboard.isEmpty()){
+            initializeStubLeaderboard();
+        }
         startGame();
 
     }
@@ -102,7 +105,7 @@ public class roadView extends SurfaceView implements Runnable {
         sm.loadSound(context);
         timeTaken = 0;
         timeStarted = System.currentTimeMillis();
-        loadLeaderboard();
+
     }
 
 
